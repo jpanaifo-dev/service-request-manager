@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
+import { authBackground } from '@/assets/images'
 
 const loginSchema = z.object({
   email: z.string().email('Ingresa un email válido'),
@@ -56,30 +57,17 @@ export const LoginForm = () => {
   return (
     <div className="flex h-screen">
       {/* Formulario (25% del ancho) */}
-      <div className="w-1/4 p-8 overflow-y-auto bg-white">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">J</span>
-              </div>
-              <span className="text-xl font-semibold text-gray-900">
-                Joinnus
-              </span>
+      <div className="w-1/3 p-8 overflow-y-auto bg-white flex items-center justify-center">
+        <div className="space-y-6 w-full max-w-md">
+          <div className="flex flex-col gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Iniciar Sesión
+              </h1>
+              <p className="text-gray-600 text-sm mb-4">
+                Ingresa tus credenciales para acceder a tu cuenta
+              </p>
             </div>
-            <Link
-              href="/register"
-              className="text-sm text-teal-600 hover:underline"
-            >
-              ¿No tienes cuenta? Regístrate
-            </Link>
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
-              Iniciar Sesión
-            </h1>
 
             <Form {...form}>
               <form
@@ -157,17 +145,7 @@ export const LoginForm = () => {
                 </div>
 
                 {/* reCAPTCHA placeholder */}
-                <div className="bg-gray-50 border border-gray-200 rounded p-4 flex items-center justify-center">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 border-2 border-gray-300 rounded"></div>
-                    <span className="text-sm text-gray-600">
-                      No soy un robot
-                    </span>
-                    <div className="ml-4">
-                      <div className="w-8 h-8 bg-blue-500 rounded"></div>
-                    </div>
-                  </div>
-                </div>
+                {/* end reCAPTCHA placeholder */}
 
                 <Button
                   type="submit"
@@ -179,29 +157,38 @@ export const LoginForm = () => {
               </form>
             </Form>
 
-            <div className="mt-6 text-center">
-              <div className="text-xs text-gray-500 mb-2">Powered by</div>
-              <div className="text-sm font-semibold text-gray-700">JOINNUS</div>
+            <div className="mt-8 flex flex-col items-center">
+              <span className="text-gray-500 text-sm mb-2">
+                ¿No tienes cuenta?{' '}
+                <Link
+                  href="/register"
+                  className="text-teal-600 hover:underline font-semibold text-sm"
+                >
+                  Regístrate gratis
+                </Link>
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Imagen (75% del ancho) */}
-      <div className="w-3/4 bg-gray-100 flex items-center justify-center">
+      <div className="w-2/3 bg-gray-100 flex items-center justify-center">
         {/* Reemplaza con tu imagen real */}
         <div className="relative w-full h-full">
           <Image
-            src="/login-background.jpg" // Reemplaza con tu ruta de imagen
+            src={authBackground.src} // Reemplaza con tu ruta de imagen
             alt="Background"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="text-center p-8 text-white">
-              <h2 className="text-4xl font-bold mb-4">Bienvenido de vuelta</h2>
-              <p className="text-xl max-w-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40 flex items-center justify-start">
+            <div className="text-left p-8 text-white w-full max-w-2xl">
+              <h2 className="text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg font-sans">
+                Bienvenido de vuelta
+              </h2>
+              <p className="text-2xl text-left font-light drop-shadow-md font-sans">
                 Accede a tu cuenta para descubrir eventos personalizados según
                 tus intereses
               </p>
