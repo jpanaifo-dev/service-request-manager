@@ -1,4 +1,4 @@
-import { Footer } from '@/components/app'
+import { Footer, Navbar } from '@/components/app'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -6,6 +6,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
+      <Navbar />
       {children}
       <Footer />
     </>
