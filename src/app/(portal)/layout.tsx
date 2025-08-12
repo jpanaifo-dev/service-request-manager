@@ -6,7 +6,12 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
-      <Navbar />
+      <Navbar
+        logo={{
+          text: 'MiTrámite',
+          href: '/',
+        }}
+      />
       {children}
       <Footer />
     </>
