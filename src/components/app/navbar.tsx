@@ -174,38 +174,45 @@ export function Navbar({
         {/* Backdrop con fade-in */}
         <div
           className={cn(
-            'fixed inset-0 bg-black transition-opacity duration-300 ease-in-out',
-            isMobileMenuOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+            'fixed inset-0 bg-black transition-all duration-500 ease-out',
+            isMobileMenuOpen ? 'bg-opacity-50 backdrop-blur-sm' : 'bg-opacity-0'
           )}
           onClick={toggleMobileMenu}
         />
 
         <div
           className={cn(
-            'fixed top-0 left-0 h-full w-80 bg-white shadow-xl transform transition-all duration-500 ease-out',
+            'fixed top-0 left-0 h-full w-80 bg-white shadow-xl transform transition-all duration-700 ease-out',
             isMobileMenuOpen
-              ? 'translate-x-0 opacity-100'
-              : '-translate-x-full opacity-0'
+              ? 'translate-x-0 opacity-100 scale-100'
+              : '-translate-x-full opacity-0 scale-95'
           )}
           style={{
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            transformOrigin: 'left center',
+            transition: isMobileMenuOpen
+              ? 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              : 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           }}
         >
           {/* Header con animación */}
           <div
             className={cn(
-              'flex items-center justify-between p-4 border-b transition-all duration-700 delay-100',
+              'flex items-center justify-between p-4 border-b transition-all duration-800 ease-out',
               isMobileMenuOpen
-                ? 'translate-y-0 opacity-100'
-                : '-translate-y-4 opacity-0'
+                ? 'translate-y-0 opacity-100 scale-100'
+                : '-translate-y-8 opacity-0 scale-95'
             )}
+            style={{
+              transitionDelay: isMobileMenuOpen ? '200ms' : '0ms',
+            }}
           >
             <span className="text-lg font-semibold">Menú</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleMobileMenu}
-              className="p-2 hover:bg-gray-100 rounded-full"
+              className="p-2 hover:bg-gray-100 rounded-full hover:scale-110 transition-transform duration-200"
             >
               <X className="h-6 w-6" />
             </Button>
@@ -216,11 +223,17 @@ export function Navbar({
             {showSearch && (
               <div
                 className={cn(
-                  'relative transition-all duration-700 delay-200',
+                  'relative transition-all duration-800 ease-out',
                   isMobileMenuOpen
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-4 opacity-0'
+                    ? 'translate-y-0 opacity-100 scale-100'
+                    : 'translate-y-6 opacity-0 scale-95'
                 )}
+                style={{
+                  transitionDelay: isMobileMenuOpen ? '300ms' : '0ms',
+                  transition: isMobileMenuOpen
+                    ? 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 300ms'
+                    : 'all 0.3s ease-out',
+                }}
               >
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="h-5 w-5 text-gray-400" />
@@ -228,7 +241,7 @@ export function Navbar({
                 <Input
                   type="text"
                   placeholder={searchPlaceholder}
-                  className="pl-10 pr-4 py-2 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="pl-10 pr-4 py-2 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 hover:shadow-md transition-shadow duration-200"
                 />
               </div>
             )}
@@ -239,19 +252,26 @@ export function Navbar({
                 <div
                   key={item.label}
                   className={cn(
-                    'transition-all duration-700 ease-out',
+                    'transition-all duration-800 ease-out',
                     isMobileMenuOpen
-                      ? 'translate-x-0 opacity-100'
-                      : '-translate-x-8 opacity-0'
+                      ? 'translate-x-0 opacity-100 scale-100'
+                      : '-translate-x-12 opacity-0 scale-95'
                   )}
                   style={{
-                    transitionDelay: `${300 + index * 100}ms`,
+                    transitionDelay: isMobileMenuOpen
+                      ? `${400 + index * 150}ms`
+                      : '0ms',
+                    transition: isMobileMenuOpen
+                      ? `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                          400 + index * 150
+                        }ms`
+                      : 'all 0.3s ease-out',
                   }}
                 >
                   <div className="flex items-center justify-between">
                     <a
                       href={item.href}
-                      className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 py-3 px-2 text-base font-medium flex-1 rounded-md transition-colors duration-200"
+                      className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 py-3 px-2 text-base font-medium flex-1 rounded-md transition-all duration-200 hover:scale-105 hover:shadow-sm"
                       onClick={!item.items ? toggleMobileMenu : undefined}
                     >
                       {item.label}
@@ -261,7 +281,7 @@ export function Navbar({
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleSubmenu(item.label)}
-                        className="p-2 hover:bg-gray-100 rounded-full"
+                        className="p-2 hover:bg-gray-100 rounded-full hover:scale-110 transition-transform duration-200"
                       >
                         <ChevronDown
                           className={cn(
@@ -277,7 +297,7 @@ export function Navbar({
                   {item.items && (
                     <div
                       className={cn(
-                        'ml-4 mt-2 space-y-2 overflow-hidden transition-all duration-300 ease-in-out',
+                        'ml-4 mt-2 space-y-2 overflow-hidden transition-all duration-400 ease-out',
                         openSubmenu === item.label
                           ? 'max-h-96 opacity-100'
                           : 'max-h-0 opacity-0'
@@ -288,16 +308,22 @@ export function Navbar({
                           key={subItem.label}
                           href={subItem.href}
                           className={cn(
-                            'block text-gray-600 hover:text-blue-600 hover:bg-blue-50 py-2 px-3 text-sm rounded-md transition-all duration-200',
+                            'block text-gray-600 hover:text-blue-600 hover:bg-blue-50 py-2 px-3 text-sm rounded-md transition-all duration-200 hover:scale-105 hover:shadow-sm',
                             openSubmenu === item.label
                               ? 'translate-x-0 opacity-100'
-                              : '-translate-x-4 opacity-0'
+                              : '-translate-x-6 opacity-0'
                           )}
                           style={{
                             transitionDelay:
                               openSubmenu === item.label
-                                ? `${subIndex * 50}ms`
+                                ? `${subIndex * 100}ms`
                                 : '0ms',
+                            transition:
+                              openSubmenu === item.label
+                                ? `all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                                    subIndex * 100
+                                  }ms`
+                                : 'all 0.2s ease-out',
                           }}
                           onClick={toggleMobileMenu}
                         >
@@ -314,11 +340,21 @@ export function Navbar({
             {actionButtons.length > 0 && (
               <div
                 className={cn(
-                  'space-y-2 pt-4 border-t transition-all duration-700 delay-500',
+                  'space-y-2 pt-4 border-t transition-all duration-800 ease-out',
                   isMobileMenuOpen
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-4 opacity-0'
+                    ? 'translate-y-0 opacity-100 scale-100'
+                    : 'translate-y-8 opacity-0 scale-95'
                 )}
+                style={{
+                  transitionDelay: isMobileMenuOpen
+                    ? `${600 + menuItems.length * 150}ms`
+                    : '0ms',
+                  transition: isMobileMenuOpen
+                    ? `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                        600 + menuItems.length * 150
+                      }ms`
+                    : 'all 0.3s ease-out',
+                }}
               >
                 {actionButtons.map((button, index) => (
                   <Button
@@ -326,7 +362,7 @@ export function Navbar({
                     variant={button.variant || 'default'}
                     onClick={button.onClick}
                     asChild={!!button.href}
-                    className="w-full justify-start hover:scale-105 transition-transform duration-200"
+                    className="w-full justify-start hover:scale-105 transition-all duration-200 hover:shadow-md"
                   >
                     {button.href ? (
                       <a
@@ -351,14 +387,24 @@ export function Navbar({
             {userSection && (
               <div
                 className={cn(
-                  'pt-4 border-t transition-all duration-700 delay-600',
+                  'pt-4 border-t transition-all duration-800 ease-out',
                   isMobileMenuOpen
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-4 opacity-0'
+                    ? 'translate-y-0 opacity-100 scale-100'
+                    : 'translate-y-8 opacity-0 scale-95'
                 )}
+                style={{
+                  transitionDelay: isMobileMenuOpen
+                    ? `${700 + menuItems.length * 150}ms`
+                    : '0ms',
+                  transition: isMobileMenuOpen
+                    ? `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                        700 + menuItems.length * 150
+                      }ms`
+                    : 'all 0.3s ease-out',
+                }}
               >
                 {userSection.isLoggedIn ? (
-                  <div className="flex items-center space-x-2 py-3 px-2 bg-gray-50 rounded-md">
+                  <div className="flex items-center space-x-2 py-3 px-2 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors duration-200">
                     <User className="h-5 w-5 text-gray-600" />
                     <span className="text-sm text-gray-700">
                       Hola, {userSection.userName}
@@ -368,7 +414,7 @@ export function Navbar({
                   <Button
                     variant="outline"
                     asChild
-                    className="w-full bg-transparent hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200"
+                    className="w-full bg-transparent hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 hover:scale-105 hover:shadow-md"
                   >
                     <a href={userSection.loginHref}>
                       {userSection.loginText || 'Iniciar sesión'}

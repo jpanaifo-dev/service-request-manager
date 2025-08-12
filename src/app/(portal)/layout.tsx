@@ -1,6 +1,13 @@
+import { Footer } from '@/components/app'
+
 interface LayoutProps {
   children: React.ReactNode
 }
-export default function layout({ children }: LayoutProps) {
-  return <>{children}</>
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <>
+      {children}
+      <Footer />
+    </>
+  )
 }
