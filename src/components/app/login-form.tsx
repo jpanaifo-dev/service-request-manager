@@ -183,12 +183,12 @@ export const LoginForm = () => {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40 flex items-center justify-start">
-            <div className="text-left p-8 text-white w-full max-w-2xl">
-              <h2 className="text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg font-sans">
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40 flex items-center justify-center">
+            <div className="text-left p-8 text-white w-full ">
+              <h2 className="text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg font-sans text-center">
                 Bienvenido de vuelta
               </h2>
-              <p className="text-2xl text-left font-light drop-shadow-md font-sans">
+              <p className="text-2xl text-center font-light drop-shadow-md font-sans">
                 Accede a tu cuenta para descubrir eventos personalizados según
                 tus intereses
               </p>
