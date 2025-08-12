@@ -25,7 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from 'react-toastify'
 
 const registerSchema = z
   .object({
@@ -36,7 +36,7 @@ const registerSchema = z
     country: z.string().min(1, 'Selecciona un país'),
     city: z.string().min(1, 'Selecciona una ciudad'),
     gender: z.enum(['male', 'female'], {
-      required_error: 'Selecciona un género',
+      error: 'Selecciona un género',
     }),
     acceptTerms: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar los términos y condiciones',
@@ -52,7 +52,6 @@ type RegisterFormData = z.infer<typeof registerSchema>
 
 export const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -74,17 +73,10 @@ export const RegisterForm = () => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      toast({
-        title: '¡Registro exitoso!',
-        description: 'Tu cuenta ha sido creada correctamente.',
-      })
+      toast.success('Cuenta creada exitosamente!')
       console.log('Register data:', data)
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Hubo un problema al crear tu cuenta.',
-        variant: 'destructive',
-      })
+    } catch {
+      toast.error('Error al crear la cuenta. Inténtalo de nuevo.')
     } finally {
       setIsLoading(false)
     }
