@@ -36,12 +36,10 @@ import {
 } from '@/lib/data'
 import {
   Building2,
-  Plus,
   Edit,
   Users,
   Mail,
   Phone,
-  ArrowLeft,
   CheckCircle,
   XCircle,
 } from 'lucide-react'
@@ -83,11 +81,6 @@ export const OfficesPage = () => {
     })
     setOficinaSeleccionada(null)
     setModoEdicion(null)
-  }
-
-  const abrirModalCrear = () => {
-    limpiarFormulario()
-    setModoEdicion('crear')
   }
 
   const abrirModalEditar = (oficina: Oficina) => {
