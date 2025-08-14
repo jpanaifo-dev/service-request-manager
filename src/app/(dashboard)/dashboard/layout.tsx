@@ -39,7 +39,7 @@ export default async function Layout(props: LayoutProps) {
           {
             section: {
               id: 1,
-              name: 'Dashboard',
+              name: 'Principal',
             },
             menus: [
               {
@@ -49,6 +49,17 @@ export default async function Layout(props: LayoutProps) {
                   url: '/dashboard',
                   icon: '',
                   description: 'Página principal del panel de administración',
+                },
+                submenus: [],
+              },
+              {
+                menu: {
+                  id: 2,
+                  name: 'Historial de Solicitudes',
+                  url: '/dashboard/solicitudes',
+                  icon: '',
+                  description:
+                    'Consultar el historial de solicitudes realizadas',
                 },
                 submenus: [],
               },
