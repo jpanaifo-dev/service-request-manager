@@ -20,8 +20,15 @@ export function SheetMenu(props: SheetMenuProps) {
   const { title, menuItems } = props
   return (
     <Sheet>
-      <SheetTrigger className="lg:hidden" asChild>
-        <Button className="h-8 " variant="link" size="icon">
+      <SheetTrigger
+        className="lg:hidden"
+        asChild
+      >
+        <Button
+          className="h-8 "
+          variant="link"
+          size="icon"
+        >
           <MenuIcon size={20} />
         </Button>
       </SheetTrigger>
@@ -35,8 +42,14 @@ export function SheetMenu(props: SheetMenuProps) {
             variant="link"
             asChild
           >
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div id="logo" className="flex items-center space-x-2">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2"
+            >
+              <div
+                id="logo"
+                className="flex items-center space-x-2"
+              >
                 <Image
                   src="/brands/escudo-epg.webp"
                   alt="Logo"
@@ -48,7 +61,10 @@ export function SheetMenu(props: SheetMenuProps) {
             </Link>
           </Button>
         </SheetHeader>
-        <Menu isOpen menuItems={menuItems} />
+        <Menu
+          isOpen
+          menuItems={menuItems}
+        />
       </SheetContent>
     </Sheet>
   )
