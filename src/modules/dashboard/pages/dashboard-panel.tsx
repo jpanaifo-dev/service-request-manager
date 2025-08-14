@@ -35,10 +35,10 @@ export const DashboardPanel = () => {
     useState<Solicitud | null>(null)
   const [nuevoEstado, setNuevoEstado] = useState<string>('')
   const [observaciones, setObservaciones] = useState<string>('')
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_logged_in')
+    localStorage.removeItem('dashboard_logged_in')
     window.location.href = '/admin'
   }
 
@@ -240,7 +240,9 @@ export const DashboardPanel = () => {
                 <Button
                   variant="outline"
                   className="h-20 flex flex-col items-center justify-center space-y-2 bg-transparent"
-                  onClick={() => (window.location.href = '/admin/solicitudes')}
+                  onClick={() =>
+                    (window.location.href = '/dashboard/solicitudes')
+                  }
                 >
                   <FileText className="w-6 h-6" />
                   <span>Gestión de Solicitudes</span>
@@ -249,7 +251,7 @@ export const DashboardPanel = () => {
                 <Button
                   variant="outline"
                   className="h-20 flex flex-col items-center justify-center space-y-2 bg-transparent"
-                  onClick={() => (window.location.href = '/admin/oficinas')}
+                  onClick={() => (window.location.href = '/dashboard/oficinas')}
                 >
                   <Building2 className="w-6 h-6" />
                   <span>Gestión de Oficinas</span>
@@ -258,7 +260,7 @@ export const DashboardPanel = () => {
                 <Button
                   variant="outline"
                   className="h-20 flex flex-col items-center justify-center space-y-2 bg-transparent"
-                  onClick={() => (window.location.href = '/admin/usuarios')}
+                  onClick={() => (window.location.href = '/dashboard/usuarios')}
                 >
                   <Users className="w-6 h-6" />
                   <span>Gestión de Usuarios</span>
@@ -267,7 +269,7 @@ export const DashboardPanel = () => {
                 <Button
                   variant="outline"
                   className="h-20 flex flex-col items-center justify-center space-y-2 bg-transparent"
-                  onClick={() => (window.location.href = '/admin/reportes')}
+                  onClick={() => (window.location.href = '/dashboard/reportes')}
                 >
                   <BarChart3 className="w-6 h-6" />
                   <span>Reportes y Estadísticas</span>

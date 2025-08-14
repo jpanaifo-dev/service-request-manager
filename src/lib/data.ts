@@ -529,3 +529,12 @@ export function formatearFecha(fecha: string): string {
     day: 'numeric',
   })
 }
+
+export interface Usuario {
+  documento: string
+  nombre: string
+  apellido: string
+  email: string
+  telefono: string
+  direccion: string
+}

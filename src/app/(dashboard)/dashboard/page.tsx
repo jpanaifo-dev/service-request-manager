@@ -1,5 +1,9 @@
-import React from 'react'
+import { DashboardPanel } from '@/modules/dashboard'
 
 export default function Page() {
-  return <div>P</div>
+  return (
+    <>
+      <DashboardPanel />
+    </>
+  )
 }
