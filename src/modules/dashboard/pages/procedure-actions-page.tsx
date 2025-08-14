@@ -120,7 +120,7 @@ export const ProcedureActionsPage = () => {
           <Card>
             <CardContent className="py-8 text-center">
               <p className="text-gray-500">Solicitud no encontrada</p>
-              <Link href="/admin/solicitudes">
+              <Link href="/dashboard/solicitudes">
                 <Button className="mt-4">Volver a Solicitudes</Button>
               </Link>
             </CardContent>
@@ -136,12 +136,11 @@ export const ProcedureActionsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Admin Header */}
       <div className="bg-blue-600 text-white py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Link href={`/admin/solicitudes/${solicitud.id}`}>
+              <Link href={`/dashboard/solicitudes/${solicitud.id}`}>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -325,7 +324,7 @@ export const ProcedureActionsPage = () => {
                   </div>
 
                   <div className="flex justify-end space-x-2">
-                    <Link href={`/admin/solicitudes/${solicitud.id}`}>
+                    <Link href={`/dashboard/solicitudes/${solicitud.id}`}>
                       <Button variant="outline">Cancelar</Button>
                     </Link>
                     <Button
@@ -404,7 +403,7 @@ export const ProcedureActionsPage = () => {
                   </Alert>
 
                   <div className="flex justify-end space-x-2">
-                    <Link href={`/admin/solicitudes/${solicitud.id}`}>
+                    <Link href={`/dashboard/solicitudes/${solicitud.id}`}>
                       <Button variant="outline">Cancelar</Button>
                     </Link>
                     <Button
@@ -454,7 +453,7 @@ export const ProcedureActionsPage = () => {
                   </Alert>
 
                   <div className="flex justify-end space-x-2">
-                    <Link href={`/admin/solicitudes/${solicitud.id}`}>
+                    <Link href={`/dashboard/solicitudes/${solicitud.id}`}>
                       <Button variant="outline">Cancelar</Button>
                     </Link>
                     <Button
