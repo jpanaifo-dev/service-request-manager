@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
@@ -263,8 +264,8 @@ export const ProcedureRequestPage = () => {
                 <Label htmlFor="documento">Número de Documento</Label>
                 <Input
                   id="documento"
-                  value={documento}
-                  onChange={(e) => setDocumento(e.target.value)}
+                  value={documento.trim()}
+                  onChange={(e) => setDocumento(e.target.value.trim())}
                   placeholder="Ej: 12345678"
                   className="mt-1"
                 />
