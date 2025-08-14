@@ -30,11 +30,31 @@ export default async function Layout(props: LayoutProps) {
   return (
     <>
       <AdminPanelLayout
-      // menuItems={menuItems.data}
-      // app={APP_NAME_KEY}
-      // email={data?.email}
-      // personData={personData}
-      // studentUuid={studentUuid}
+        // menuItems={menuItems.data}
+        // app={APP_NAME_KEY}
+        // email={data?.email}
+        // personData={personData}
+        // studentUuid={studentUuid}
+        menuItems={[
+          {
+            section: {
+              id: 1,
+              name: 'Dashboard',
+            },
+            menus: [
+              {
+                menu: {
+                  id: 1,
+                  name: 'Inicio',
+                  url: '/dashboard',
+                  icon: '',
+                  description: 'Página principal del panel de administración',
+                },
+                submenus: [],
+              },
+            ],
+          },
+        ]}
       >
         {children}
       </AdminPanelLayout>

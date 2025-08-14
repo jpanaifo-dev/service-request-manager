@@ -172,7 +172,6 @@ export const ProcedureListPage = () => {
                     <TableHead>Solicitante</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Estado</TableHead>
-                    <TableHead>Fecha</TableHead>
                     <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
