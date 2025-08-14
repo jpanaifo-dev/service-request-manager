@@ -41,7 +41,7 @@ export const ProcedureListPage = () => {
   const [filtroEstado, setFiltroEstado] = useState<string>('todos')
   const [filtroTipo, setFiltroTipo] = useState<string>('todos')
   const [busqueda, setBusqueda] = useState<string>('')
-  const [isAuthenticated] = useState(false)
+  const [isAuthenticated] = useState(true)
 
   const solicitudesFiltradas = solicitudes.filter((sol) => {
     const usuario = usuariosSimulados.find(
@@ -208,7 +208,9 @@ export const ProcedureListPage = () => {
                         {/* <TableCell>{solicitud.fechaSolicitud}</TableCell> */}
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Link href={`/admin/solicitudes/${solicitud.id}`}>
+                            <Link
+                              href={`/dashboard/solicitudes/${solicitud.id}`}
+                            >
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -219,7 +221,7 @@ export const ProcedureListPage = () => {
                             </Link>
 
                             <Link
-                              href={`/admin/solicitudes/${solicitud.id}/acciones`}
+                              href={`/dashboard/solicitudes/${solicitud.id}/acciones`}
                             >
                               <Button
                                 variant="outline"
@@ -231,7 +233,7 @@ export const ProcedureListPage = () => {
                             </Link>
 
                             <Link
-                              href={`/admin/solicitudes/${solicitud.id}/acciones?tab=derivar`}
+                              href={`/dashboard/solicitudes/${solicitud.id}/acciones?tab=derivar`}
                             >
                               <Button
                                 variant="outline"
