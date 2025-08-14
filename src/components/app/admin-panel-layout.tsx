@@ -2,30 +2,18 @@
 import { useSidebar, useStore } from '@/hooks'
 import { cn } from '@/lib/utils'
 import { SideBar } from './side-bar'
-// import { BreadcrumbCustom } from './bread-crumb-custom'
-import { IPerson, MenuConfigApps, SectionElement } from '@/types'
-import { NavBarCustom } from '../navbar-custom/nav-bar-custom'
+import { SectionElement } from '@/types'
+import { NavBarCustom } from './nav-bar-custom'
 import { Footer } from './footer'
-
-const APP_NAME_KEY: MenuConfigApps = 'student'
-
-//  const res = await setStudentUuidAction(
-//         course.student_file_uuid || '',
-//         APP_URL.CURSOS.DETALLE(course.course_group_id.toString())
-//       )
 
 export default function AdminPanelLayout({
   children,
-  app,
   menuItems,
   email,
-  personData,
 }: {
   children: React.ReactNode
-  app?: MenuConfigApps
   menuItems?: SectionElement[]
   email?: string
-  personData?: IPerson // Adjust type as needed, e.g., IPerson
 }) {
   const sidebar = useStore(useSidebar, (x) => x)
 
@@ -34,10 +22,7 @@ export default function AdminPanelLayout({
 
   return (
     <>
-      <SideBar
-        menuItems={menuItems}
-        app={app}
-      />
+      <SideBar menuItems={menuItems} />
 
       <main
         className={cn(
@@ -46,14 +31,10 @@ export default function AdminPanelLayout({
         )}
       >
         <NavBarCustom
-          app={APP_NAME_KEY}
-          person={personData}
-          email={email}
           menuItems={menuItems}
+          email={email}
         />
-        {/* <section className="px-4 py-3 bg-gray-100 sticky top-14 z-20">
-          <BreadcrumbCustom />
-        </section> */}
+
         <main className="w-full container mx-auto py-4 bg-slate-100 zoom-adjust">
           {children}
         </main>
