@@ -1,3 +1,4 @@
 import { OfficesPage } from './offices-page'
+import { ProcedureListPage } from './procedure-list-page'
 
-export { OfficesPage }
+export { OfficesPage, ProcedureListPage }

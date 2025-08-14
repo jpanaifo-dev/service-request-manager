@@ -36,7 +36,7 @@ import {
 import { Eye, Edit, Send, Search, Filter } from 'lucide-react'
 import Link from 'next/link'
 
-export default function SolicitudesAdmin() {
+export const ProcedureListPage = () => {
   const [solicitudes] = useState<Solicitud[]>(solicitudesSimuladas)
   const [filtroEstado, setFiltroEstado] = useState<string>('todos')
   const [filtroTipo, setFiltroTipo] = useState<string>('todos')
