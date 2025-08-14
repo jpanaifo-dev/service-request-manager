@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -28,23 +28,18 @@ import {
 } from 'lucide-react'
 
 export const DashboardPanel = () => {
-  const [solicitudes, setSolicitudes] =
-    useState<Solicitud[]>(solicitudesSimuladas)
-  const [filtroEstado, setFiltroEstado] = useState<string>('todos')
-  const [solicitudSeleccionada, setSolicitudSeleccionada] =
-    useState<Solicitud | null>(null)
-  const [nuevoEstado, setNuevoEstado] = useState<string>('')
-  const [observaciones, setObservaciones] = useState<string>('')
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [solicitudes] = useState<Solicitud[]>(solicitudesSimuladas)
+  //   const [filtroEstado, setFiltroEstado] = useState<string>('todos')
+  //   const [solicitudSeleccionada, setSolicitudSeleccionada] =
+  // //     useState<Solicitud | null>(null)
+  //   const [nuevoEstado, setNuevoEstado] = useState<string>('')
+  //   const [observaciones, setObservaciones] = useState<string>('')
+  const [isAuthenticated] = useState(true)
 
   const handleLogout = () => {
     localStorage.removeItem('dashboard_logged_in')
     window.location.href = '/admin'
   }
-
-  const solicitudesFiltradas = solicitudes.filter((sol) =>
-    filtroEstado === 'todos' ? true : sol.estado === filtroEstado
-  )
 
   const estadisticas = {
     total: solicitudes.length,
@@ -55,33 +50,33 @@ export const DashboardPanel = () => {
     rechazadas: solicitudes.filter((s) => s.estado === 'rechazada').length,
   }
 
-  const datosGrafico = [
-    { name: 'Pendientes', value: estadisticas.pendientes, color: '#fbbf24' },
-    { name: 'En Revisión', value: estadisticas.enRevision, color: '#3b82f6' },
-    { name: 'Aprobadas', value: estadisticas.aprobadas, color: '#10b981' },
-    { name: 'Completadas', value: estadisticas.completadas, color: '#6b7280' },
-    { name: 'Rechazadas', value: estadisticas.rechazadas, color: '#ef4444' },
-  ]
+  //   const datosGrafico = [
+  //     { name: 'Pendientes', value: estadisticas.pendientes, color: '#fbbf24' },
+  //     { name: 'En Revisión', value: estadisticas.enRevision, color: '#3b82f6' },
+  //     { name: 'Aprobadas', value: estadisticas.aprobadas, color: '#10b981' },
+  //     { name: 'Completadas', value: estadisticas.completadas, color: '#6b7280' },
+  //     { name: 'Rechazadas', value: estadisticas.rechazadas, color: '#ef4444' },
+  //   ]
 
-  const actualizarSolicitud = () => {
-    if (!solicitudSeleccionada || !nuevoEstado) return
+  //   const actualizarSolicitud = () => {
+  //     if (!solicitudSeleccionada || !nuevoEstado) return
 
-    const solicitudesActualizadas = solicitudes.map((sol) =>
-      sol.id === solicitudSeleccionada.id
-        ? {
-            ...sol,
-            estado: nuevoEstado as Solicitud['estado'],
-            observaciones: observaciones || sol.observaciones,
-            fechaActualizacion: new Date().toISOString().split('T')[0],
-          }
-        : sol
-    )
+  //     const solicitudesActualizadas = solicitudes.map((sol) =>
+  //       sol.id === solicitudSeleccionada.id
+  //         ? {
+  //             ...sol,
+  //             estado: nuevoEstado as Solicitud['estado'],
+  //             observaciones: observaciones || sol.observaciones,
+  //             fechaActualizacion: new Date().toISOString().split('T')[0],
+  //           }
+  //         : sol
+  //     )
 
-    setSolicitudes(solicitudesActualizadas)
-    setSolicitudSeleccionada(null)
-    setNuevoEstado('')
-    setObservaciones('')
-  }
+  //     setSolicitudes(solicitudesActualizadas)
+  //     setSolicitudSeleccionada(null)
+  //     setNuevoEstado('')
+  //     setObservaciones('')
+  //   }
 
   if (!isAuthenticated) {
     return <div>Verificando autenticación...</div>
