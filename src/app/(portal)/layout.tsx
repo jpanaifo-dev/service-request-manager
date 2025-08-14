@@ -11,6 +11,20 @@ export default function Layout({ children }: LayoutProps) {
           text: 'MiTrámite',
           href: '/',
         }}
+        menuItems={[
+          {
+            label: 'Inicio',
+            href: '/',
+          },
+          {
+            label: 'Consultar trámite',
+            href: '/consultar',
+          },
+          {
+            label: 'Iniciar trámite',
+            href: '/iniciar-tramite',
+          },
+        ]}
       />
       {children}
       <Footer />
