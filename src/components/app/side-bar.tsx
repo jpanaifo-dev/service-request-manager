@@ -30,8 +30,8 @@ export const SideBar = (props: SideBarProps) => {
         className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800 w-full"
       >
         <LogoRender
-          nameApp="SIGAE"
-          subtitle="Estudiante"
+          nameApp="TRÁMITES"
+          subtitle="Service Request Manager"
           href={'/dashboard'}
           className="w-full max-w-36"
         />
