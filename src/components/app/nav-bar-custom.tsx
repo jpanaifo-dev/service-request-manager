@@ -27,11 +27,9 @@ export const NavBarCustom = (props: NavBarCustomProps) => {
   return (
     <header
       className={cn(`sticky top-0 z-50 w-full  shadow `)}
-      style={
-        {
-          // backgroundColor: colorApp,
-        }
-      }
+      style={{
+        backgroundColor: 'rgb(255, 255, 255)', //white
+      }}
     >
       <div className="px-4 sm:px-6 md:px-7 flex h-16 items-center">
         <div className="flex items-center space-x-4 lg:space-x-0 sm:gap-3">

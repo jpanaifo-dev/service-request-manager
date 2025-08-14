@@ -20,6 +20,46 @@ export interface Solicitud {
   observaciones?: string
 }
 
+export interface Oficina {
+  id: string
+  nombre: string
+  descripcion: string
+  responsable: string
+  email: string
+  telefono: string
+  activa: boolean
+  fechaCreacion: string
+}
+
+export interface AsignacionUsuarioOficina {
+  id: string
+  usuarioDocumento: string
+  oficinaId: string
+  rol: 'administrador' | 'operador' | 'consultor'
+  fechaAsignacion: string
+  activa: boolean
+}
+
+export interface HistorialSolicitud {
+  id: string
+  solicitudId: string
+  tipo:
+    | 'creacion'
+    | 'actualizacion'
+    | 'derivacion'
+    | 'aprobacion'
+    | 'rechazo'
+    | 'completado'
+  accion: string
+  usuario: string
+  oficina: string
+  fecha: string
+  hora: string
+  estadoAnterior?: string
+  estadoNuevo?: string
+  observaciones?: string
+}
+
 // Enhanced mock data with more realistic examples
 export const usuariosSimulados: User[] = [
   {
@@ -149,6 +189,250 @@ export const solicitudesSimuladas: Solicitud[] = [
   },
 ]
 
+export const oficinasSimuladas: Oficina[] = [
+  {
+    id: 'OF001',
+    nombre: 'Oficina de Atención Ciudadana',
+    descripcion: 'Atención general al ciudadano y recepción de solicitudes',
+    responsable: 'María Fernanda Castro',
+    email: 'atencion.ciudadana@gobierno.gov.co',
+    telefono: '+57 1 234-5678',
+    activa: true,
+    fechaCreacion: '2023-01-15',
+  },
+  {
+    id: 'OF002',
+    nombre: 'Departamento de Planeación',
+    descripcion:
+      'Revisión y aprobación de permisos de construcción y urbanismo',
+    responsable: 'Ing. Roberto Mendoza',
+    email: 'planeacion@gobierno.gov.co',
+    telefono: '+57 1 234-5679',
+    activa: true,
+    fechaCreacion: '2023-01-15',
+  },
+  {
+    id: 'OF003',
+    nombre: 'Oficina de Hacienda',
+    descripcion:
+      'Gestión de impuestos, certificados de paz y salvo y asuntos fiscales',
+    responsable: 'Dra. Carmen Rodríguez',
+    email: 'hacienda@gobierno.gov.co',
+    telefono: '+57 1 234-5680',
+    activa: true,
+    fechaCreacion: '2023-01-15',
+  },
+  {
+    id: 'OF004',
+    nombre: 'Secretaría de Desarrollo Económico',
+    descripcion:
+      'Licencias comerciales, permisos de eventos y desarrollo empresarial',
+    responsable: 'Lic. Andrés Vargas',
+    email: 'desarrollo.economico@gobierno.gov.co',
+    telefono: '+57 1 234-5681',
+    activa: true,
+    fechaCreacion: '2023-01-15',
+  },
+  {
+    id: 'OF005',
+    nombre: 'Oficina de Sistemas',
+    descripcion: 'Soporte técnico y mantenimiento de sistemas informáticos',
+    responsable: 'Ing. Patricia Jiménez',
+    email: 'sistemas@gobierno.gov.co',
+    telefono: '+57 1 234-5682',
+    activa: false,
+    fechaCreacion: '2023-01-15',
+  },
+]
+
+export const asignacionesSimuladas: AsignacionUsuarioOficina[] = [
+  {
+    id: 'AS001',
+    usuarioDocumento: '12345678',
+    oficinaId: 'OF001',
+    rol: 'operador',
+    fechaAsignacion: '2023-02-01',
+    activa: true,
+  },
+  {
+    id: 'AS002',
+    usuarioDocumento: '87654321',
+    oficinaId: 'OF002',
+    rol: 'administrador',
+    fechaAsignacion: '2023-02-01',
+    activa: true,
+  },
+  {
+    id: 'AS003',
+    usuarioDocumento: '11223344',
+    oficinaId: 'OF003',
+    rol: 'operador',
+    fechaAsignacion: '2023-02-15',
+    activa: true,
+  },
+  {
+    id: 'AS004',
+    usuarioDocumento: '55667788',
+    oficinaId: 'OF004',
+    rol: 'consultor',
+    fechaAsignacion: '2023-03-01',
+    activa: true,
+  },
+  {
+    id: 'AS005',
+    usuarioDocumento: '99887766',
+    oficinaId: 'OF001',
+    rol: 'administrador',
+    fechaAsignacion: '2023-03-15',
+    activa: true,
+  },
+  {
+    id: 'AS006',
+    usuarioDocumento: '12345678',
+    oficinaId: 'OF003',
+    rol: 'consultor',
+    fechaAsignacion: '2023-04-01',
+    activa: false,
+  },
+]
+
+export const historialSimulado: HistorialSolicitud[] = [
+  {
+    id: 'HIST-001',
+    solicitudId: 'SOL-001',
+    tipo: 'creacion',
+    accion: 'Solicitud creada por el ciudadano',
+    usuario: 'Juan Carlos Rodríguez',
+    oficina: 'Portal Ciudadano',
+    fecha: '2024-01-15',
+    hora: '09:30',
+    estadoNuevo: 'pendiente',
+    observaciones: 'Solicitud creada exitosamente con documentos adjuntos',
+  },
+  {
+    id: 'HIST-002',
+    solicitudId: 'SOL-001',
+    tipo: 'actualizacion',
+    accion: 'Solicitud asignada para revisión',
+    usuario: 'María Fernanda Castro',
+    oficina: 'Oficina de Atención Ciudadana',
+    fecha: '2024-01-16',
+    hora: '14:15',
+    estadoAnterior: 'pendiente',
+    estadoNuevo: 'en-revision',
+    observaciones:
+      'Asignada al revisor especializado en certificados de residencia',
+  },
+  {
+    id: 'HIST-003',
+    solicitudId: 'SOL-001',
+    tipo: 'aprobacion',
+    accion: 'Solicitud aprobada',
+    usuario: 'Carlos Mendoza',
+    oficina: 'Oficina de Atención Ciudadana',
+    fecha: '2024-01-18',
+    hora: '11:45',
+    estadoAnterior: 'en-revision',
+    estadoNuevo: 'aprobada',
+    observaciones:
+      'Documentos verificados correctamente. Certificado listo para entrega.',
+  },
+  {
+    id: 'HIST-004',
+    solicitudId: 'SOL-002',
+    tipo: 'creacion',
+    accion: 'Solicitud creada por el ciudadano',
+    usuario: 'Juan Carlos Rodríguez',
+    oficina: 'Portal Ciudadano',
+    fecha: '2024-01-20',
+    hora: '16:20',
+    estadoNuevo: 'pendiente',
+    observaciones:
+      'Solicitud de permiso de construcción con planos arquitectónicos',
+  },
+  {
+    id: 'HIST-005',
+    solicitudId: 'SOL-002',
+    tipo: 'derivacion',
+    accion: 'Solicitud derivada al Departamento de Planeación',
+    usuario: 'María Fernanda Castro',
+    oficina: 'Oficina de Atención Ciudadana',
+    fecha: '2024-01-21',
+    hora: '10:30',
+    estadoAnterior: 'pendiente',
+    estadoNuevo: 'en-revision',
+    observaciones:
+      'Derivada por requerir revisión técnica especializada de planos',
+  },
+  {
+    id: 'HIST-006',
+    solicitudId: 'SOL-002',
+    tipo: 'actualizacion',
+    accion: 'Solicitud en revisión técnica',
+    usuario: 'Ing. Roberto Mendoza',
+    oficina: 'Departamento de Planeación',
+    fecha: '2024-01-22',
+    hora: '09:15',
+    estadoAnterior: 'en-revision',
+    estadoNuevo: 'en-revision',
+    observaciones:
+      'Revisión de planos en proceso. Pendiente concepto de bomberos.',
+  },
+  {
+    id: 'HIST-007',
+    solicitudId: 'SOL-003',
+    tipo: 'creacion',
+    accion: 'Solicitud creada por el ciudadano',
+    usuario: 'María Elena González',
+    oficina: 'Portal Ciudadano',
+    fecha: '2024-01-10',
+    hora: '08:45',
+    estadoNuevo: 'pendiente',
+    observaciones:
+      'Solicitud de certificado de ingresos para crédito hipotecario',
+  },
+  {
+    id: 'HIST-008',
+    solicitudId: 'SOL-003',
+    tipo: 'actualizacion',
+    accion: 'Solicitud en proceso de verificación',
+    usuario: 'Ana Patricia Ruiz',
+    oficina: 'Oficina de Hacienda',
+    fecha: '2024-01-12',
+    hora: '13:20',
+    estadoAnterior: 'pendiente',
+    estadoNuevo: 'en-revision',
+    observaciones: 'Verificación de información tributaria en proceso',
+  },
+  {
+    id: 'HIST-009',
+    solicitudId: 'SOL-003',
+    tipo: 'aprobacion',
+    accion: 'Solicitud aprobada y certificado generado',
+    usuario: 'Dra. Carmen Rodríguez',
+    oficina: 'Oficina de Hacienda',
+    fecha: '2024-01-20',
+    hora: '15:30',
+    estadoAnterior: 'en-revision',
+    estadoNuevo: 'aprobada',
+    observaciones: 'Certificado de ingresos aprobado y generado',
+  },
+  {
+    id: 'HIST-010',
+    solicitudId: 'SOL-003',
+    tipo: 'completado',
+    accion: 'Certificado entregado al ciudadano',
+    usuario: 'María Fernanda Castro',
+    oficina: 'Oficina de Atención Ciudadana',
+    fecha: '2024-01-25',
+    hora: '10:15',
+    estadoAnterior: 'aprobada',
+    estadoNuevo: 'completada',
+    observaciones:
+      'Certificado entregado exitosamente. Documento válido por 30 días.',
+  },
+]
+
 export const tiposSolicitud = [
   'Certificado de Residencia',
   'Certificado de Ingresos',
@@ -192,6 +476,18 @@ export function obtenerColorEstado(estado: Solicitud['estado']): string {
     default:
       return 'bg-gray-100 text-gray-800'
   }
+}
+
+export function obtenerHistorialSolicitud(
+  solicitudId: string
+): HistorialSolicitud[] {
+  return historialSimulado
+    .filter((hist) => hist.solicitudId === solicitudId)
+    .sort((a, b) => {
+      const fechaA = new Date(`${a.fecha} ${a.hora}`)
+      const fechaB = new Date(`${b.fecha} ${b.hora}`)
+      return fechaB.getTime() - fechaA.getTime() // Más reciente primero
+    })
 }
 
 // Added new helper functions for enhanced functionality
