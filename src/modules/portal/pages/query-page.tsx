@@ -177,7 +177,7 @@ export const QueryPage = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
+              <div className="flex-1 flex flex-col gap-2 md:gap-4">
                 <Label htmlFor="documento">Número de Documento</Label>
                 <Input
                   id="documento"
@@ -186,6 +186,23 @@ export const QueryPage = () => {
                   placeholder="Ej: 12345678"
                   className="mt-1"
                 />
+                <Button
+                  onClick={() => buscarSolicitudes()}
+                  disabled={loading}
+                  className="w-full sm:w-auto"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Buscando...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-4 h-4 mr-2" />
+                      Buscar
+                    </>
+                  )}
+                </Button>
                 <div className="mt-2 p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600 font-medium mb-1">
                     📋 Documentos de prueba disponibles:
@@ -205,25 +222,6 @@ export const QueryPage = () => {
                     </p>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-end">
-                <Button
-                  onClick={() => buscarSolicitudes()}
-                  disabled={loading}
-                  className="w-full sm:w-auto"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Buscando...
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-4 h-4 mr-2" />
-                      Buscar
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
           </CardContent>
