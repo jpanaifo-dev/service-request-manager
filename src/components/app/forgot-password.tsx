@@ -175,7 +175,7 @@ export const ForgotPassword = (props: IProps) => {
 
           <Button
             type="submit"
-            className="w-full bg-[#001B3D]"
+            className="w-full"
             disabled={isLoading}
           >
             {isLoading && <LoaderIcon className="animate-spin mr-2" />}
