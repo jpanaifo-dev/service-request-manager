@@ -4,6 +4,7 @@ import { Footer } from './footer'
 import { Navbar } from './navbar'
 import AdminPanelLayout from './admin-panel-layout'
 import { ToastCustom } from './toast-custom'
+import { AuthLayout } from './auth-layout'
 
 export {
   RegisterForm,
@@ -12,4 +13,5 @@ export {
   Navbar,
   AdminPanelLayout,
   ToastCustom,
+  AuthLayout,
 }

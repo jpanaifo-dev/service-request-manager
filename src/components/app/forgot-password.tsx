@@ -1,17 +1,15 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-// import { AuthLayout } from '@/modules/app'
 import { LoaderIcon, X } from 'lucide-react'
 import { Input } from '../ui/input'
 import { useForm, Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { recoveryPassword } from '@/api/auth'
-import { ToastCustom } from '../app'
+import { AuthLayout, ToastCustom } from '../app'
 import { APP_URL } from '@/data/constants'
 import { ForgotPasswordForm } from '@/types'
-import Image from 'next/image'
 import { authBackground } from '@/assets/images'
 
 interface IProps {
@@ -19,9 +17,13 @@ interface IProps {
 }
 
 export const ForgotPassword = (props: IProps) => {
-  const { email } = props
+  const { email: defaultEmail } = props
   const { control, handleSubmit, watch, formState } =
-    useForm<ForgotPasswordForm>()
+    useForm<ForgotPasswordForm>({
+      defaultValues: {
+        email: defaultEmail,
+      },
+    })
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
@@ -67,7 +69,10 @@ export const ForgotPassword = (props: IProps) => {
   }
 
   return (
-    <div className="flex h-screen">
+    <AuthLayout
+      hiddenName
+      backgroundImage={authBackground.src}
+    >
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">Cambiar contraseña</h2>
         <p className="text-sm text-gray-600">
@@ -103,7 +108,7 @@ export const ForgotPassword = (props: IProps) => {
           <Controller
             name="email"
             control={control}
-            defaultValue=""
+            defaultValue={defaultEmail}
             rules={{
               required: 'El correo electrónico es requerido',
               pattern: {
@@ -187,30 +192,6 @@ export const ForgotPassword = (props: IProps) => {
           </Button>
         </form>
       </div>
-
-      {/* Imagen (75% del ancho) */}
-      <div className="w-2/3 bg-gray-100 flex items-center justify-center">
-        <div className="relative w-full h-full">
-          <Image
-            src={authBackground.src}
-            alt="Background"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40 flex items-center justify-center">
-            <div className="text-left p-8 text-white w-full ">
-              <h2 className="text-5xl font-extrabold mb-4 tracking-tight drop-shadow-lg font-sans text-center">
-                Bienvenido de vuelta
-              </h2>
-              <p className="text-2xl text-center font-light drop-shadow-md font-sans">
-                Accede a tu cuenta para descubrir eventos personalizados según
-                tus intereses
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </AuthLayout>
   )
 }
