@@ -182,7 +182,7 @@ export const LoginForm = () => {
               </form>
             </Form>
 
-            <div className="mt-8 flex flex-col items-center">
+            {/* <div className="mt-8 flex flex-col items-center">
               <span className="text-gray-500 text-sm mb-2">
                 ¿No tienes cuenta?{' '}
                 <Link
@@ -192,7 +192,7 @@ export const LoginForm = () => {
                   Regístrate gratis
                 </Link>
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
