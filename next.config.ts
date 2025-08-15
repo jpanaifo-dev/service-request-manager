@@ -30,7 +30,6 @@ const nextConfig: NextConfig = {
     URL_API_LOCAL: process.env.APP_URL_API_LOCAL,
     // production APIs
     URL_API_PRODUCTION: process.env.APP_URL_API_PRODUCTION,
-    //development APIs
   },
 }
 
