@@ -29,6 +29,5 @@ export const loginSchema = z.object({
 export type LoginFormValues = z.infer<typeof loginSchema>
 
 export interface LoginProps {
-  path: 'student' | 'teacher'
   subTitle?: string
 }
