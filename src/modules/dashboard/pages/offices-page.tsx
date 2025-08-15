@@ -43,8 +43,14 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react'
+import { IOffices } from '@/types'
 
-export const OfficesPage = () => {
+interface IProps {
+  officesList?: IOffices[]
+}
+
+export const OfficesPage = (props: IProps) => {
+  const { officesList } = props
   const [oficinas, setOficinas] = useState<Oficina[]>(oficinasSimuladas)
   const [oficinaSeleccionada, setOficinaSeleccionada] =
     useState<Oficina | null>(null)
@@ -60,15 +66,6 @@ export const OfficesPage = () => {
     activa: true,
   })
   const [isAuthenticated] = useState(true)
-
-  //   useEffect(() => {
-  //     const loggedIn = localStorage.getItem('admin_logged_in')
-  //     if (!loggedIn) {
-  //       window.location.href = '/admin'
-  //       return
-  //     }
-  //     setIsAuthenticated(true)
-  //   }, [])
 
   const limpiarFormulario = () => {
     setFormData({

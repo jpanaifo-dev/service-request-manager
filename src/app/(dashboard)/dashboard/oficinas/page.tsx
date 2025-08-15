@@ -1,10 +1,12 @@
 import { OfficesPage } from '@/modules/dashboard/pages'
-import React from 'react'
+import { fetchOfficesList } from '@/api/app'
 
-export default function Page() {
+export default async function Page() {
+  const response = await fetchOfficesList()
+
   return (
     <>
-      <OfficesPage />
+      <OfficesPage officesList={response.data} />
     </>
   )
 }
