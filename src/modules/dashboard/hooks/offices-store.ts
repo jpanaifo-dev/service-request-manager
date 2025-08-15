@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { IOffices } from '@/types'
-import { IOfficeFormData } from '@/schemas'
 
 interface OfficesState {
   offices: IOffices[]
@@ -12,9 +11,6 @@ interface OfficesState {
 
   // Actions
   setOffices: (offices: IOffices[]) => void
-  addOffice: (office: IOfficeFormData) => void
-  updateOffice: (id: number, office: IOfficeFormData) => void
-  deleteOffice: (id: number) => void
   setSearchTerm: (term: string) => void
   setSortBy: (sortBy: 'name' | 'code' | 'email') => void
   setSortOrder: (order: 'asc' | 'desc') => void
@@ -34,26 +30,6 @@ export const useOfficesStore = create<OfficesState>((set, get) => ({
   editingOffice: null,
 
   setOffices: (offices) => set({ offices }),
-
-  addOffice: (office) =>
-    set((state) => {
-      const newId = Math.max(...state.offices.map((o) => o.id), 0) + 1
-      const newOffice: IOffices = { id: newId, ...office }
-      return { offices: [...state.offices, newOffice] }
-    }),
-
-  updateOffice: (id, office) =>
-    set((state) => ({
-      offices: state.offices.map((o) =>
-        o.id === id ? { ...o, ...office } : o
-      ),
-    })),
-
-  deleteOffice: (id) =>
-    set((state) => ({
-      offices: state.offices.filter((o) => o.id !== id),
-    })),
-
   setSearchTerm: (term) => set({ searchTerm: term }),
   setSortBy: (sortBy) => set({ sortBy }),
   setSortOrder: (order) => set({ sortOrder: order }),
