@@ -24,7 +24,12 @@ export const ENDPOINTS_CONFIG = {
     PASSWORD_CHANGE: `${BASE_PATHS.AUTH}${MODELS_PATHS.USER}password-change/`,
     PASSWORD_RESET: `${BASE_PATHS.AUTH}${MODELS_PATHS.USER}password-reset/`,
   },
+  CORE: {
+    OFFICES: {
+      LIST: `${BASE_PATHS.CORE}office/`,
+      DETAIL: (id: string) => `${BASE_PATHS.CORE}office/${id}/`,
+    },
+  },
   ACCOUNTS: {},
   PERSON: {},
-  CORE: {},
 }
