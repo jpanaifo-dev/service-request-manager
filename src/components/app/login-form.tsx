@@ -165,7 +165,7 @@ export const LoginForm = () => {
                   />
 
                   <Link
-                    href="#"
+                    href={APP_URL.AUTH.FORGOT_PASSWORD}
                     className="text-sm text-teal-600 hover:underline"
                   >
                     ¿Olvidaste tu contraseña?
