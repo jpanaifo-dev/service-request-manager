@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,39 +31,52 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { IOffices } from '@/types'
-// import { IOfficeFormData } from '@/schemas'
 import { Edit, Mail, Phone, Plus, Search, Filter } from 'lucide-react'
-import { useOfficesStore } from '../hooks/offices-store'
 import { OfficeForm } from '../components/office-form'
-import { useEffect } from 'react'
+import { useState } from 'react'
 
 interface OfficesPageProps {
   officesList?: IOffices[]
 }
 
 export function OfficesPage({ officesList }: OfficesPageProps) {
-  const {
-    searchTerm,
-    sortBy,
-    sortOrder,
-    isModalOpen,
-    editingOffice,
-    setSearchTerm,
-    setSortBy,
-    setSortOrder,
-    openModal,
-    closeModal,
-    filteredOffices,
-    setOffices,
-  } = useOfficesStore()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState<'name' | 'code' | 'email'>('name')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingOffice, setEditingOffice] = useState<IOffices | null>(null)
 
-  useEffect(() => {
-    if (officesList) {
-      setOffices(officesList)
-    }
-  }, [officesList])
+  const openModal = (office?: IOffices) => {
+    setEditingOffice(office || null)
+    setIsModalOpen(true)
+  }
 
-  const filteredAndSortedOffices = filteredOffices()
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setEditingOffice(null)
+  }
+
+  const filteredAndSortedOffices = officesList
+    ? officesList
+        .filter((office) => {
+          const searchLower = searchTerm.toLowerCase()
+          return (
+            office.name.toLowerCase().includes(searchLower) ||
+            office.code.toLowerCase().includes(searchLower) ||
+            office.email.toLowerCase().includes(searchLower) ||
+            office.phone.toLowerCase().includes(searchLower)
+          )
+        })
+        .sort((a, b) => {
+          const aValue =
+            sortBy === 'name' ? a.name : sortBy === 'code' ? a.code : a.email
+          const bValue =
+            sortBy === 'name' ? b.name : sortBy === 'code' ? b.code : b.email
+          if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
+          if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
+          return 0
+        })
+    : []
 
   const openCreateModal = () => {
     openModal()
@@ -73,11 +85,6 @@ export function OfficesPage({ officesList }: OfficesPageProps) {
   const openEditModal = (office: IOffices) => {
     openModal(office)
   }
-
-  // const handleDelete = (id: number) => {
-  //   if (confirm('¿Estás seguro de que deseas eliminar esta oficina?')) {
-  //   }
-  // }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">

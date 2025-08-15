@@ -9,6 +9,7 @@ import { IOfficeFormData, officeFormSchema } from '@/schemas'
 import { createOrUpdateOffice } from '@/api/app'
 import { toast } from 'react-toastify'
 import { ToastCustom } from '@/components/app'
+import { APP_URL } from '@/data/constants'
 
 interface OfficeFormProps {
   office?: IOffices | null
@@ -51,6 +52,7 @@ export function OfficeForm({
       const response = await createOrUpdateOffice({
         id: office?.id,
         data,
+        urlRevalidate: APP_URL.DASHBOARD.OFFICES,
       })
 
       if (response.status >= 200 && response.status < 300) {
