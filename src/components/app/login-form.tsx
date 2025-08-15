@@ -174,7 +174,7 @@ export const LoginForm = () => {
 
                 <Button
                   type="submit"
-                  className="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 rounded-lg font-medium"
+                  className="w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
