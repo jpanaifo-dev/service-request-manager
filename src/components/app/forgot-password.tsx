@@ -70,7 +70,7 @@ export const ForgotPassword = (props: IProps) => {
 
   return (
     <AuthLayout
-      hiddenName
+      hiddenApp
       backgroundImage={authBackground.src}
     >
       <div className="space-y-6">

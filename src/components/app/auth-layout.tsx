@@ -16,9 +16,9 @@ interface AuthLayoutProps {
   title?: string
 }
 
-const TITLE = '¡Bienvenido a SIGAE - UNAP!'
+const TITLE = '¡Bienvenido a tu panel de administración!'
 const DESCRIPTION =
-  'Accede para gestionar tus solicitudes, ver convocatorias y hacer seguimiento a tus postulaciones.'
+  'Administra tus solicitudes, consulta convocatorias y realiza seguimiento a tus postulaciones desde este panel.'
 
 export function AuthLayout({
   children,
