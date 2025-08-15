@@ -1,4 +1,5 @@
 import { AdminPanelLayout } from '@/components/app'
+import { APP_URL } from '@/data/constants'
 // import { APP_URL } from '@/config/urls-data/student.urls.config'
 // import { getUserAuth } from '@/lib/session'
 // import { IPerson, IUserAuth, MenuConfigApps } from '@/types'
@@ -46,7 +47,7 @@ export default async function Layout(props: LayoutProps) {
                 menu: {
                   id: 1,
                   name: 'Inicio',
-                  url: '/dashboard',
+                  url: APP_URL.DASHBOARD.BASE,
                   icon: '',
                   description: 'Página principal del panel de administración',
                 },
@@ -56,10 +57,30 @@ export default async function Layout(props: LayoutProps) {
                 menu: {
                   id: 2,
                   name: 'Historial de Solicitudes',
-                  url: '/dashboard/solicitudes',
+                  url: APP_URL.DASHBOARD.SOLICITUDES,
                   icon: '',
                   description:
                     'Consultar el historial de solicitudes realizadas',
+                },
+                submenus: [],
+              },
+              {
+                menu: {
+                  id: 3,
+                  name: 'Oficinas',
+                  url: APP_URL.DASHBOARD.OFFICES,
+                  icon: '',
+                  description: 'Consultar las oficinas disponibles',
+                },
+                submenus: [],
+              },
+              {
+                menu: {
+                  id: 4,
+                  name: 'Usuarios',
+                  url: APP_URL.DASHBOARD.USERS,
+                  icon: '',
+                  description: 'Administrar los usuarios del sistema',
                 },
                 submenus: [],
               },
