@@ -14,9 +14,9 @@ export const APP_URL = {
     BASE: '/',
   },
   AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    FORGOT_PASSWORD: '/auth/forgot-password',
+    LOGIN: '/login',
+    REGISTER: '/register',
+    FORGOT_PASSWORD: '/forgot-password',
   },
   DASHBOARD: {
     BASE: `${URL_DASHBOARD}`,
