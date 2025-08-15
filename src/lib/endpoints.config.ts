@@ -29,6 +29,10 @@ export const ENDPOINTS_CONFIG = {
       LIST: `${BASE_PATHS.CORE}office/`,
       DETAIL: (id: string) => `${BASE_PATHS.CORE}office/${id}/`,
     },
+    PERSON: {
+      LIST: `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}`,
+      DETAIL: (id: string) => `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}${id}/`,
+    },
   },
   ACCOUNTS: {},
   PERSON: {},
