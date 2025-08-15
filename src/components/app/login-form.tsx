@@ -70,7 +70,6 @@ export const LoginForm = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Formulario (25% del ancho) */}
       <div className="w-1/3 p-8 overflow-y-auto bg-white flex items-center justify-center">
         <div className="space-y-6 w-full max-w-md">
           <div className="flex flex-col gap-4">
