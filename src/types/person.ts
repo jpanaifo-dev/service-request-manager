@@ -1,13 +1,16 @@
 export interface Person {
   id: number
-  username: string
+  uuid: string
+  document_number: string
+  names: string
+  last_name1: string
+  last_name2: string
+  gender: string
   email: string
-  is_active: boolean
-  is_staff: boolean
-  is_superuser: boolean
-  last_login: string // ISO date string
-  first_name: string
-  last_name: string
+  cellphone: string
+  address: string | null
+  document_type: number
+  user: number
 }
 
 export interface PersonFilter {
