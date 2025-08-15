@@ -6,24 +6,27 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { IOffices } from '@/types'
 import { IOfficeFormData, officeFormSchema } from '@/schemas'
+import { createOrUpdateOffice } from '@/api/app'
+import { toast } from 'react-toastify'
+import { ToastCustom } from '@/components/app'
 
 interface OfficeFormProps {
   office?: IOffices | null
-  onSubmit: (data: IOfficeFormData) => void
   onCancel: () => void
   isEditing?: boolean
+  onSuccess?: () => void
 }
 
 export function OfficeForm({
   office,
-  onSubmit,
   onCancel,
   isEditing = false,
+  onSuccess,
 }: OfficeFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<IOfficeFormData>({
     resolver: zodResolver(officeFormSchema),
@@ -43,9 +46,47 @@ export function OfficeForm({
           },
   })
 
-  const handleFormSubmit = (data: IOfficeFormData) => {
-    onSubmit(data)
-    reset()
+  const handleFormSubmit = async (data: IOfficeFormData) => {
+    try {
+      const response = await createOrUpdateOffice({
+        id: office?.id,
+        data,
+      })
+
+      if (response.status >= 200 && response.status < 300) {
+        toast.success(
+          <ToastCustom
+            title="Éxito"
+            description={
+              isEditing
+                ? 'Oficina actualizada correctamente'
+                : 'Oficina creada correctamente'
+            }
+          />
+        )
+        onSuccess?.()
+        reset()
+      } else {
+        const errorMessage = response.errors?.join(', ') || 'Error desconocido'
+        toast.error(
+          <ToastCustom
+            title="Error"
+            description={`Error al ${
+              isEditing ? 'actualizar' : 'crear'
+            } la oficina: ${errorMessage}`}
+          />
+        )
+      }
+    } catch {
+      toast.error(
+        <ToastCustom
+          title="Error"
+          description={`Error al ${
+            isEditing ? 'actualizar' : 'crear'
+          } la oficina`}
+        />
+      )
+    }
   }
 
   return (
@@ -53,7 +94,7 @@ export function OfficeForm({
       onSubmit={handleSubmit(handleFormSubmit)}
       className="space-y-4"
     >
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4">
         <div>
           <Label htmlFor="code">Código *</Label>
           <Input
@@ -80,7 +121,7 @@ export function OfficeForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4">
         <div>
           <Label htmlFor="phone">Teléfono *</Label>
           <Input
@@ -113,11 +154,16 @@ export function OfficeForm({
           type="button"
           variant="outline"
           onClick={onCancel}
+          disabled={isSubmitting}
         >
           Cancelar
         </Button>
-        <Button type="submit">
-          {isEditing ? 'Actualizar' : 'Crear'} Oficina
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Procesando...' : isEditing ? 'Actualizar' : 'Crear'}{' '}
+          Oficina
         </Button>
       </div>
     </form>

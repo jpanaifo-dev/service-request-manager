@@ -12,7 +12,7 @@ export const officeFormSchema = z.object({
   phone: z
     .string()
     .min(1, 'El teléfono es requerido')
-    .min(10, 'El teléfono debe tener al menos 10 dígitos'),
+    .min(9, 'El teléfono debe tener al menos 10 dígitos'),
   email: z.string().min(1, 'El email es requerido').email('Email inválido'),
 })
 

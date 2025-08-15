@@ -32,8 +32,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { IOffices } from '@/types'
-import { IOfficeFormData } from '@/schemas'
-import { Edit, Mail, Phone, Plus, Search, Filter, Trash2 } from 'lucide-react'
+// import { IOfficeFormData } from '@/schemas'
+import { Edit, Mail, Phone, Plus, Search, Filter } from 'lucide-react'
 import { useOfficesStore } from '../hooks/offices-store'
 import { OfficeForm } from '../components/office-form'
 import { useEffect } from 'react'
@@ -44,7 +44,6 @@ interface OfficesPageProps {
 
 export function OfficesPage({ officesList }: OfficesPageProps) {
   const {
-    offices,
     searchTerm,
     sortBy,
     sortOrder,
@@ -75,17 +74,10 @@ export function OfficesPage({ officesList }: OfficesPageProps) {
     openModal(office)
   }
 
-  const handleSubmit = (formData: IOfficeFormData) => {
-    if (editingOffice) {
-    } else {
-    }
-    closeModal()
-  }
-
-  const handleDelete = (id: number) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta oficina?')) {
-    }
-  }
+  // const handleDelete = (id: number) => {
+  //   if (confirm('¿Estás seguro de que deseas eliminar esta oficina?')) {
+  //   }
+  // }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -186,14 +178,6 @@ export function OfficesPage({ officesList }: OfficesPageProps) {
                         >
                           <Edit className="w-3 h-3" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(office.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -229,7 +213,9 @@ export function OfficesPage({ officesList }: OfficesPageProps) {
 
           <OfficeForm
             office={editingOffice}
-            onSubmit={handleSubmit}
+            onSuccess={() => {
+              closeModal()
+            }}
             onCancel={closeModal}
             isEditing={!!editingOffice}
           />
