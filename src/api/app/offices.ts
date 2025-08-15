@@ -3,6 +3,7 @@ import { fetchServices } from '../core/api-clients'
 import { ENDPOINTS_CONFIG } from '@/lib/endpoints.config'
 import { IOffices } from '@/types'
 import { IOfficeFormData } from '@/schemas'
+import { revalidatePath } from 'next/cache'
 
 export const fetchOfficesList = async (): Promise<{
   status: number
@@ -67,9 +68,7 @@ export const createOrUpdateOffice = async ({
       }
     }
     const responseData: IOffices = await response.json()
-    if (urlRevalidate) {
-      await fetchServices.get(urlRevalidate)
-    }
+    revalidatePath(urlRevalidate || '/dashboard/oficinas')
     return {
       status: response.status,
       data: responseData,
