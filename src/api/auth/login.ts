@@ -11,8 +11,6 @@ export const fetchLogin = async (data: {
 }): Promise<{ status: number; data?: IUserAuth; errors?: string[] }> => {
   const path = ENDPOINTS_CONFIG.AUTH.LOGIN
 
-  // const headers = await buildHeaders(role === 'student' ? 'STUDENT' : 'TEACHER')
-
   try {
     const response = await fetchServices.post(path, data, false)
     if (!response.ok) {

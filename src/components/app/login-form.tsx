@@ -16,12 +16,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { toast } from 'react-toastify'
 import Image from 'next/image'
 import { authBackground } from '@/assets/images'
+import { fetchLogin } from '@/api/auth'
+import { APP_URL } from '@/data/constants'
+import { toast } from 'react-toastify'
+import { ToastCustom } from './toast-custom'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const loginSchema = z.object({
-  email: z.string().email('Ingresa un email válido'),
+  username: z.string().min(1, 'El usuario es requerido'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   rememberMe: z.boolean().optional(),
 })
@@ -30,11 +34,15 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [errorsList, setErrorsList] = useState<Array<string>>([])
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect') || null
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      username: '',
       password: '',
       rememberMe: false,
     },
@@ -42,16 +50,22 @@ export const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      toast.success('Inicio de sesión exitoso')
-      console.log('Login data:', data)
-    } catch {
-      toast.error('Error al iniciar sesión. Por favor, inténtalo de nuevo.')
-    } finally {
-      setIsLoading(false)
+    setErrorsList([])
+
+    const response = await fetchLogin(data)
+    if (response.status === 200 && response.data) {
+      toast.success(
+        <ToastCustom
+          title="Inicio de sesión exitoso"
+          description={`Bienvenido, ${response?.data?.first_name} ${response?.data?.last_name}.`}
+        />
+      )
+      router.push(redirectUrl || APP_URL.DASHBOARD.BASE)
+    } else {
+      setErrorsList(response.errors || ['Error desconocido.'])
     }
+
+    setIsLoading(false)
   }
 
   return (
@@ -69,6 +83,21 @@ export const LoginForm = () => {
               </p>
             </div>
 
+            {errorsList?.length > 0 && (
+              <section className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative dark:bg-red-500 dark:border-red-400 dark:text-red-100">
+                <ul className="flex flex-col gap-1">
+                  {errorsList?.map((error, index) => (
+                    <li
+                      key={index}
+                      className="text-red-500 text-sm list-disc list-inside"
+                    >
+                      {error}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -76,16 +105,16 @@ export const LoginForm = () => {
               >
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-gray-700">
-                        Email
+                        Usuario
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="email"
-                          placeholder="tu@email.com"
+                          type="text"
+                          placeholder="Tu usuario"
                           className="border-gray-200 focus:border-teal-500 focus:ring-teal-500"
                           {...field}
                         />
@@ -144,9 +173,6 @@ export const LoginForm = () => {
                   </Link>
                 </div>
 
-                {/* reCAPTCHA placeholder */}
-                {/* end reCAPTCHA placeholder */}
-
                 <Button
                   type="submit"
                   className="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 rounded-lg font-medium"
@@ -174,10 +200,9 @@ export const LoginForm = () => {
 
       {/* Imagen (75% del ancho) */}
       <div className="w-2/3 bg-gray-100 flex items-center justify-center">
-        {/* Reemplaza con tu imagen real */}
         <div className="relative w-full h-full">
           <Image
-            src={authBackground.src} // Reemplaza con tu ruta de imagen
+            src={authBackground.src}
             alt="Background"
             fill
             className="object-cover"
