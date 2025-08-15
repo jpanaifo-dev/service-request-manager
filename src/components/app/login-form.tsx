@@ -187,7 +187,7 @@ export const LoginForm = () => {
                 ¿No tienes cuenta?{' '}
                 <Link
                   href="/register"
-                  className="text-teal-600 hover:underline font-semibold text-sm"
+                  className="text-teal-600 hover:underline font-semibold"
                 >
                   Regístrate gratis
                 </Link>
