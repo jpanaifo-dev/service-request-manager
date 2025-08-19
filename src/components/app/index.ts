@@ -5,6 +5,7 @@ import { Navbar } from './navbar'
 import AdminPanelLayout from './admin-panel-layout'
 import { ToastCustom } from './toast-custom'
 import { AuthLayout } from './auth-layout'
+import { InputSearch } from './input-search'
 
 export {
   RegisterForm,
@@ -14,4 +15,5 @@ export {
   AdminPanelLayout,
   ToastCustom,
   AuthLayout,
+  InputSearch,
 }
