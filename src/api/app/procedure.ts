@@ -28,7 +28,9 @@ export const fetchProceduresList = async (
       }
     })
   }
-  const path = `${ENDPOINTS_CONFIG.DESK.PROCEDURE.LIST}?${params.toString()}`
+  const path = `${
+    ENDPOINTS_CONFIG.DESK.PROCEDURE.LIST_DETAIL
+  }?${params.toString()}`
 
   try {
     const response = await fetchServices.get(path)

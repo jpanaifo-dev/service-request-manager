@@ -1,3 +1,4 @@
+import { Person } from './person'
 import { ProcedureType } from './procedureType'
 
 export interface ProcedureBase {
@@ -8,14 +9,15 @@ export interface ProcedureBase {
   file: string
   created_at: string
   updated_at: string
-  person: number
 }
 export interface ProcedureList extends ProcedureBase {
   procedure_type: number
+  person: number
 }
 
 export interface ProcedureData extends ProcedureBase {
   procedure_type: ProcedureType
+  person: Person
 }
 
 export interface ProcedureFilter {
