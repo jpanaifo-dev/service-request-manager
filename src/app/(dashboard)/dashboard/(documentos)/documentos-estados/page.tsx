@@ -1,9 +1,11 @@
+import { fetchProcedureStatusList } from '@/api/app'
 import { ProcedureStatusTable } from '@/modules/dashboard'
 
-export default function Page() {
+export default async function Page() {
+  const response = await fetchProcedureStatusList()
   return (
     <div>
-      <ProcedureStatusTable data={[] /* Replace with actual data */} />
+      <ProcedureStatusTable data={response.data || []} />
     </div>
   )
 }
