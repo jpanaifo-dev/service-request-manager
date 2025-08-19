@@ -9,7 +9,7 @@ export const procedureStatusSchema = z.object({
     .string()
     .min(1, 'La descripción es requerida')
     .max(500, 'La descripción no puede exceder 500 caracteres'),
-  is_active: z.boolean().default(false),
+  is_active: z.boolean(),
 })
 
 export type ProcedureStatusFormData = z.infer<typeof procedureStatusSchema>
