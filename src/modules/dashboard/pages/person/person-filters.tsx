@@ -1,3 +1,4 @@
+'use client'
 import { InputSearch } from '@/components/app'
 import { Label } from '@/components/ui/label'
 
@@ -12,10 +13,7 @@ export const PersonFilters = () => {
         </span>
       </Label>
       <InputSearch
-        onSearch={(params) => {
-          // Handle search logic here
-          console.log('Search parameters:', params)
-        }}
+        onChange={(value) => console.log('Buscar personas:', value)}
       />
     </>
   )
