@@ -52,7 +52,7 @@ export function PersonListPage({ persons = [] }: PersonListPageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="conatiner mx-auto py-8 px-4 sm:px-6">
       {/* Tabla de Personas */}
       <Card>
         <CardHeader>
@@ -112,7 +112,7 @@ export function PersonListPage({ persons = [] }: PersonListPageProps) {
                         <Button
                           variant="outline"
                           size="sm"
-                        //   onClick={() => onView?.(person)}
+                          //   onClick={() => onView?.(person)}
                         >
                           <User className="w-3 h-3" />
                         </Button>
