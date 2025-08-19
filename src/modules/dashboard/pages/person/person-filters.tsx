@@ -28,7 +28,7 @@ export const PersonFilters = () => {
           defaultValue={search}
           placeholder="Buscar por documento, nombre o apellido"
           onChange={handleSearchChange}
-          className="w-full max-w-md"
+          className="w-full max-w-5xl"
         />
       </div>
     </div>
