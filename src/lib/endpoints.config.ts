@@ -10,6 +10,7 @@ const BASE_PATHS = {
   EVALUATION: 'evaluation/',
   ACADEMIC: 'academic/',
   ECONOMIC: 'economic/',
+  DESK: 'desk/',
 }
 
 const MODELS_PATHS = {
@@ -33,6 +34,8 @@ export const ENDPOINTS_CONFIG = {
       LIST: `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}`,
       DETAIL: (id: string) => `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}${id}/`,
     },
+  },
+  DESK: {
     PROCEDURE_STATUS: {
       LIST: `${BASE_PATHS.CORE}procedure-status/`,
       DETAIL: (id: string) => `${BASE_PATHS.CORE}procedure-status/${id}/`,

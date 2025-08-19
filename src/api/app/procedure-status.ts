@@ -10,7 +10,7 @@ export const fetchProcedureStatusList = async (): Promise<{
   data?: ProcedureStatus[]
   errors?: string[]
 }> => {
-  const path = ENDPOINTS_CONFIG.CORE.PROCEDURE_STATUS.LIST
+  const path = ENDPOINTS_CONFIG.DESK.PROCEDURE_STATUS.LIST
 
   try {
     const response = await fetchServices.get(path)
@@ -52,8 +52,8 @@ export const createOrUpdateProcedureStatus = async ({
   errors?: string[]
 }> => {
   const path = id
-    ? `${ENDPOINTS_CONFIG.CORE.PROCEDURE_STATUS.LIST}${id}/`
-    : ENDPOINTS_CONFIG.CORE.PROCEDURE_STATUS.LIST
+    ? `${ENDPOINTS_CONFIG.DESK.PROCEDURE_STATUS.LIST}${id}/`
+    : ENDPOINTS_CONFIG.DESK.PROCEDURE_STATUS.LIST
   try {
     const response = id
       ? await fetchServices.put(path, data)
@@ -88,7 +88,7 @@ export const deleteProcedureStatus = async (
   status: number
   errors?: string[]
 }> => {
-  const path = `${ENDPOINTS_CONFIG.CORE.PROCEDURE_STATUS.LIST}${id}/`
+  const path = `${ENDPOINTS_CONFIG.DESK.PROCEDURE_STATUS.LIST}${id}/`
   try {
     const response = await fetchServices.delete(path)
     if (!response.ok) {
