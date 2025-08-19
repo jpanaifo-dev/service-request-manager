@@ -44,6 +44,11 @@ export const ENDPOINTS_CONFIG = {
       LIST: `${BASE_PATHS.DESK}procedure-type/`,
       DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-type/${id}/`,
     },
+    PROCEDURE: {
+      LIST: `${BASE_PATHS.DESK}procedure/`,
+      LIST_DETAIL: `${BASE_PATHS.DESK}procedure/list/`,
+      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure/${id}/`,
+    },
   },
   ACCOUNTS: {},
   PERSON: {},
