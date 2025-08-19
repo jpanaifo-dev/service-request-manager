@@ -47,12 +47,6 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
     setIsFormOpen(true)
   }
 
-  // const handleDelete = (id: number) => {
-  //   if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
-  //     onDelete?.(id)
-  //   }
-  // }
-
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-6">
       <>

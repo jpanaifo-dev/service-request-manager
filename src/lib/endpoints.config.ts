@@ -41,8 +41,8 @@ export const ENDPOINTS_CONFIG = {
       DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-status/${id}/`,
     },
     PROCEDURE_TYPE: {
-      LIST: `${BASE_PATHS.DESK}procedure-types/`,
-      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-types/${id}/`,
+      LIST: `${BASE_PATHS.DESK}procedure-type/`,
+      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-type/${id}/`,
     },
   },
   ACCOUNTS: {},

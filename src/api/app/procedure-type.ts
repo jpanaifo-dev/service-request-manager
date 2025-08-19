@@ -21,19 +21,20 @@ export const fetchProcedureTypeList = async (): Promise<{
       return {
         status: response.status,
         errors: errorMessages,
+        data: [],
       }
     }
 
-    const responseData: ProcedureType[] = await response.json()
     return {
       status: response.status,
-      data: responseData,
+      data: (await response.json()) as ProcedureType[],
     }
   } catch (error) {
     console.error('Error making request:', error)
     return {
       status: 500,
       errors: ['Error connecting to the server.'],
+      data: [],
     }
   }
 }

@@ -72,9 +72,10 @@ export function ProcedureTypeTable({
       <>
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold">Tipos de Procedimiento</h1>
+            <h1 className="text-2xl font-semibold">Tipos de Trámites</h1>
             <p className="text-sm text-muted-foreground">
-              Administra los tipos de procedimientos aquí.
+              Administra los tipos de trámites disponibles en el sistema. Puedes
+              agregar, editar o eliminar tipos de trámites según sea necesario.
             </p>
           </div>
           <Button
