@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, Plus, Edit } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -12,19 +12,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { ProcedureStatusForm } from '@/modules/dashboard/components'
-import { ProcedureStatus } from '@/types'
+import { ProcedureTypeForm } from '../../components/procedure-type-form'
+import { ProcedureType } from '@/types'
+import { ProcedureTypeFormData } from '@/schemas'
 
-interface ProcedureStatusTableProps {
-  data: ProcedureStatus[]
+interface ProcedureTypeTableProps {
+  data: ProcedureType[]
+  onAdd?: (data: ProcedureTypeFormData) => void
+  onEdit?: (id: number, data: ProcedureTypeFormData) => void
+  onDelete?: (id: number) => void
+  isLoading?: boolean
 }
 
-export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
+export function ProcedureTypeTable({
+  data,
+  onDelete,
+  isLoading = false,
+}: ProcedureTypeTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState<ProcedureStatus | null>(null)
+  const [editingItem, setEditingItem] = useState<ProcedureType | null>(null)
 
   // Filtrar datos basado en el término de búsqueda
   const filteredData = useMemo(() => {
@@ -42,27 +56,25 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
     setIsFormOpen(true)
   }
 
-  const handleEdit = (item: ProcedureStatus) => {
+  const handleEdit = (item: ProcedureType) => {
     setEditingItem(item)
     setIsFormOpen(true)
   }
 
-  // const handleDelete = (id: number) => {
-  //   if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
-  //     onDelete?.(id)
-  //   }
-  // }
+  const handleDelete = (id: number) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
+      onDelete?.(id)
+    }
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-6">
       <>
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-semibold">
-              Estados de Procedimientos
-            </h1>
+            <h1 className="text-2xl font-semibold">Tipos de Procedimiento</h1>
             <p className="text-sm text-muted-foreground">
-              Administra los estados de los procedimientos aquí.
+              Administra los tipos de procedimientos aquí.
             </p>
           </div>
           <Button
@@ -126,14 +138,29 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(item)}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Editar
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(item)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(item.id)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Eliminar
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
@@ -158,10 +185,11 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
       )}
 
       {/* Modal del formulario */}
-      <ProcedureStatusForm
+      <ProcedureTypeForm
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         initialData={editingItem}
+        isLoading={isLoading}
       />
     </div>
   )
