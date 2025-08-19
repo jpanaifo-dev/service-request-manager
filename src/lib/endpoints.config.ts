@@ -37,12 +37,12 @@ export const ENDPOINTS_CONFIG = {
   },
   DESK: {
     PROCEDURE_STATUS: {
-      LIST: `${BASE_PATHS.CORE}procedure-status/`,
-      DETAIL: (id: string) => `${BASE_PATHS.CORE}procedure-status/${id}/`,
+      LIST: `${BASE_PATHS.DESK}procedure-status/`,
+      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-status/${id}/`,
     },
     PROCEDURE_TYPES: {
-      LIST: `${BASE_PATHS.CORE}procedure-types/`,
-      DETAIL: (id: string) => `${BASE_PATHS.CORE}procedure-types/${id}/`,
+      LIST: `${BASE_PATHS.DESK}procedure-types/`,
+      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-types/${id}/`,
     },
   },
   ACCOUNTS: {},
