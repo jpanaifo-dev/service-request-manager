@@ -23,5 +23,7 @@ export const APP_URL = {
     SOLICITUDES: `${URL_DASHBOARD}/solicitudes`,
     OFFICES: `${URL_DASHBOARD}/oficinas`,
     USERS: `${URL_DASHBOARD}/usuarios`,
+    DOCUMENTS_TYPES: `${URL_DASHBOARD}/documentos-tipos`,
+    DOCUMENTS_STATUS: `${URL_DASHBOARD}/documentos-estados`,
   },
 }

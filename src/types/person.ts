@@ -25,5 +25,4 @@ export interface PersonFilter {
   last_name2__icontains?: string
   document_number?: string
   document_number__icontains?: string
-  search?: string
 }

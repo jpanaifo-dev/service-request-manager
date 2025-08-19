@@ -2,15 +2,24 @@
 import { fetchServices } from '../core/api-clients'
 import { ENDPOINTS_CONFIG } from '@/lib/endpoints.config'
 import { revalidatePath } from 'next/cache'
-import { IResApi, Person } from '@/types'
+import { IResApi, Person, PersonFilter } from '@/types'
 import { IPersonFormData } from '@/schemas'
 
-export const fetchPersonList = async (): Promise<{
+export const fetchPersonList = async (
+  props: PersonFilter
+): Promise<{
   status: number
   data?: IResApi<Person>
   errors?: string[]
 }> => {
-  const path = ENDPOINTS_CONFIG.CORE.PERSON.LIST
+  const params = new URLSearchParams()
+  Object.entries(props).forEach(([key, value]) => {
+    if (value !== undefined) {
+      params.set(key, String(value))
+    }
+  })
+
+  const path = `${ENDPOINTS_CONFIG.CORE.PERSON.LIST}?${params.toString()}`
 
   try {
     const response = await fetchServices.get(path)
@@ -21,6 +30,12 @@ export const fetchPersonList = async (): Promise<{
       return {
         status: response.status,
         errors: errorMessages,
+        data: {
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        },
       }
     }
 
@@ -34,6 +49,12 @@ export const fetchPersonList = async (): Promise<{
     return {
       status: 500,
       errors: ['Error connecting to the server.'],
+      data: {
+        count: 0,
+        next: null,
+        previous: null,
+        results: [],
+      },
     }
   }
 }

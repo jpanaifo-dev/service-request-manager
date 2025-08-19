@@ -3,13 +3,13 @@ import { InputSearch } from '@/components/app'
 import { useParamsFilters } from '@/hooks/use-params-filters'
 
 export const PersonFilters = () => {
-  const { updateFilter, getParams } = useParamsFilters()
+  const { updateFilter, getParams, removeFilter } = useParamsFilters()
 
   const search = getParams({ key: 'search', value: '' })
 
   const handleSearchChange = (value: string) => {
     if (value.trim() === '') {
-      updateFilter({ key: 'search', value: '' })
+      removeFilter({ key: 'search' })
     } else {
       updateFilter({ key: 'search', value })
     }

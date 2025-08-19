@@ -12,11 +12,11 @@ interface LayoutProps {
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | SIGAE - ESTUDIANTE | UNAP',
-    default: 'SIGAE - ESTUDIANTE | UNAP',
+    template: '%s | Servicio de Trámites',
+    default: 'Servicio de Trámites',
   },
   description:
-    'Intranet Estudiante de la Escuela de Posgrado de la Universidad Nacional de la Amazonía Peruana (UNAP)',
+    'Panel de administración para la gestión y seguimiento de solicitudes de trámites.',
 }
 
 // const APP_NAME_KEY: MenuConfigApps = 'student'
@@ -83,6 +83,39 @@ export default async function Layout(props: LayoutProps) {
                   description: 'Administrar los usuarios del sistema',
                 },
                 submenus: [],
+              },
+            ],
+          },
+          {
+            section: {
+              id: 2,
+              name: 'Gestión',
+            },
+            menus: [
+              {
+                menu: {
+                  id: 5,
+                  name: 'Documentos y estados',
+                  description: 'Administrar documentos y estados de trámites',
+                  url: APP_URL.DASHBOARD.DOCUMENTS_TYPES,
+                  icon: '',
+                },
+                submenus: [
+                  {
+                    id: 1,
+                    name: 'Tipos de documentos',
+                    url: APP_URL.DASHBOARD.DOCUMENTS_TYPES,
+                    icon: '',
+                    description: 'Administrar los tipos de documentos',
+                  },
+                  {
+                    id: 2,
+                    name: 'Estados de trámites',
+                    url: APP_URL.DASHBOARD.DOCUMENTS_STATUS,
+                    icon: '',
+                    description: 'Administrar los estados de los trámites',
+                  },
+                ],
               },
             ],
           },
