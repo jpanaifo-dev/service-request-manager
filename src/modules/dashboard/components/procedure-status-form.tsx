@@ -23,11 +23,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { ProcedureStatusFormData, procedureStatusSchema } from '@/schemas'
 import { ProcedureStatus } from '@/types'
+import { createOrUpdateProcedureStatus } from '@/api/app'
+import { toast } from 'react-toastify'
+import { ToastCustom } from '@/components/app'
+import { useEffect } from 'react'
 
 interface ProcedureStatusFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: (data: ProcedureStatusFormData) => void
   initialData?: ProcedureStatus | null
   isLoading?: boolean
 }
@@ -35,7 +38,6 @@ interface ProcedureStatusFormProps {
 export function ProcedureStatusForm({
   open,
   onOpenChange,
-  onSubmit,
   initialData,
   isLoading = false,
 }: ProcedureStatusFormProps) {
@@ -48,9 +50,55 @@ export function ProcedureStatusForm({
     },
   })
 
-  const handleSubmit = (data: ProcedureStatusFormData) => {
-    onSubmit(data)
-    form.reset()
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.name,
+        description: initialData.description,
+        is_active: initialData.is_active,
+      })
+    }
+  }, [initialData, form])
+
+  const handleSubmit = async (data: ProcedureStatusFormData) => {
+    try {
+      const response = await createOrUpdateProcedureStatus({
+        id: initialData?.id,
+        data,
+        urlRevalidate: '/dashboard/procedure-status',
+      })
+
+      if (response.status >= 400) {
+        toast.error(
+          <ToastCustom
+            title="Error al guardar el estado"
+            description={
+              response.errors?.[0] ||
+              'Hubo un error al intentar guardar el estado del procedimiento. Por favor, inténtalo de nuevo.'
+            }
+          />
+        )
+        return
+      } else {
+        toast.success(
+          <ToastCustom
+            title="Estado guardado"
+            description="El estado del procedimiento se ha guardado correctamente."
+          />
+        )
+        onOpenChange(false)
+        form.reset()
+      }
+    } catch {
+      toast.error(
+        <ToastCustom
+          title="Error al guardar el estado"
+          description={
+            'Hubo un error al intentar guardar el estado del procedimiento. Por favor, inténtalo de nuevo.'
+          }
+        />
+      )
+    }
   }
 
   const handleClose = () => {

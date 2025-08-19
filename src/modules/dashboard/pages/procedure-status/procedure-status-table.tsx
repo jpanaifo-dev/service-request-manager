@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
+import { Search, Plus, Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -12,31 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProcedureStatusForm } from '@/modules/dashboard/components'
 import { ProcedureStatus } from '@/types'
-import { ProcedureStatusFormData } from '@/schemas'
 
 interface ProcedureStatusTableProps {
   data: ProcedureStatus[]
-  onAdd?: (data: ProcedureStatusFormData) => void
-  onEdit?: (id: number, data: ProcedureStatusFormData) => void
-  onDelete?: (id: number) => void
   isLoading?: boolean
 }
 
 export function ProcedureStatusTable({
   data,
-  onAdd,
-  onEdit,
-  onDelete,
   isLoading = false,
 }: ProcedureStatusTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -64,27 +51,24 @@ export function ProcedureStatusTable({
     setIsFormOpen(true)
   }
 
-  const handleFormSubmit = (formData: ProcedureStatusFormData) => {
-    if (editingItem) {
-      onEdit?.(editingItem.id, formData)
-    } else {
-      onAdd?.(formData)
-    }
-    setIsFormOpen(false)
-    setEditingItem(null)
-  }
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
-      onDelete?.(id)
-    }
-  }
+  // const handleDelete = (id: number) => {
+  //   if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
+  //     onDelete?.(id)
+  //   }
+  // }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-6">
+      <>
         <div className="flex items-center justify-between">
-          <CardTitle>Estados de Procedimiento</CardTitle>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-semibold">
+              Estados de Procedimientos
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Administra los estados de los procedimientos aquí.
+            </p>
+          </div>
           <Button
             onClick={handleAdd}
             size="sm"
@@ -95,7 +79,7 @@ export function ProcedureStatusTable({
         </div>
 
         {/* Barra de búsqueda */}
-        <div className="relative">
+        <div className="relative bg-white rounded-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Buscar por nombre o descripción..."
@@ -104,104 +88,86 @@ export function ProcedureStatusTable({
             className="pl-10"
           />
         </div>
-      </CardHeader>
+      </>
 
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
+      <div className="rounded-md border bg-white p-2">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Descripción</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredData.length === 0 ? (
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-8 text-muted-foreground"
+                >
+                  {searchTerm
+                    ? 'No se encontraron resultados'
+                    : 'No hay datos disponibles'}
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredData.length === 0 ? (
-                <TableRow>
+            ) : (
+              filteredData.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.id}</TableCell>
+                  <TableCell>{item.name}</TableCell>
                   <TableCell
-                    colSpan={5}
-                    className="text-center py-8 text-muted-foreground"
+                    className="max-w-xs truncate"
+                    title={item.description}
                   >
-                    {searchTerm
-                      ? 'No se encontraron resultados'
-                      : 'No hay datos disponibles'}
+                    {item.description}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.is_active ? 'default' : 'secondary'}>
+                      {item.is_active ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
                   </TableCell>
                 </TableRow>
-              ) : (
-                filteredData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.id}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell
-                      className="max-w-xs truncate"
-                      title={item.description}
-                    >
-                      {item.description}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={item.is_active ? 'default' : 'secondary'}>
-                        {item.is_active ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEdit(item)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(item.id)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Eliminar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Información de resultados */}
-        {data.length > 0 && (
-          <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
-            <div>
-              Mostrando {filteredData.length} de {data.length} resultados
-            </div>
-            {searchTerm && (
-              <div>
-                Filtrado por:
-                {`"${searchTerm}"`}
-              </div>
+              ))
             )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Información de resultados */}
+      {data.length > 0 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
+          <div>
+            Mostrando {filteredData.length} de {data.length} resultados
           </div>
-        )}
-      </CardContent>
+          {searchTerm && (
+            <div>
+              Filtrado por:
+              {`"${searchTerm}"`}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Modal del formulario */}
       <ProcedureStatusForm
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
-        onSubmit={handleFormSubmit}
         initialData={editingItem}
         isLoading={isLoading}
       />
-    </Card>
+    </div>
   )
 }
