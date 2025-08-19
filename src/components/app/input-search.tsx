@@ -7,6 +7,8 @@ import { Search } from 'lucide-react'
 export interface InputSearchProps {
   /** Valor del input */
   value?: string
+  /** Valor inicial por defecto */
+  defaultValue?: string
   /** Callback cuando cambia el valor */
   onChange?: (value: string) => void
   /** Placeholder para el input */
@@ -20,18 +22,21 @@ export interface InputSearchProps {
 }
 
 export function InputSearch({
-  value: propValue = '',
+  value: propValue,
+  defaultValue = '',
   onChange,
   placeholder = 'Buscar...',
   debounceTime = 300,
   className = '',
   ...props
 }: InputSearchProps) {
-  const [internalValue, setInternalValue] = useState(propValue)
+  const [internalValue, setInternalValue] = useState(propValue ?? defaultValue)
 
   // Actualizar el valor interno cuando cambia la prop
   useEffect(() => {
-    setInternalValue(propValue)
+    if (propValue !== undefined) {
+      setInternalValue(propValue)
+    }
   }, [propValue])
 
   // Debounce para onChange
