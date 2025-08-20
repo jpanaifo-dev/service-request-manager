@@ -83,7 +83,9 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
                     </Link>
 
                     <Link
-                      href={`/dashboard/tramites/${procedimiento.id}/acciones`}
+                      href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
+                        procedimiento.id.toString()
+                      )}`}
                     >
                       <Button
                         variant="outline"
@@ -95,7 +97,9 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
                     </Link>
 
                     <Link
-                      href={`/dashboard/tramites/${procedimiento.id}/acciones?tab=derivar`}
+                      href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
+                        procedimiento.id.toString()
+                      )}?tab=derivar`}
                     >
                       <Button
                         variant="outline"

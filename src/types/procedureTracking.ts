@@ -13,15 +13,15 @@ export interface ProcedureTrackingBase {
 
 export interface ProcedureTracking extends ProcedureTrackingBase {
   actor: number | null
-  from_office: number
-  to_office: number
+  from_office: number | null
+  to_office: number | null
   procedure: number
   status: number
 }
 
 export interface ProcedureTrackingDetail extends ProcedureTrackingBase {
-  from_office: IOffices
-  to_office: IOffices
+  from_office: IOffices | null
+  to_office: IOffices | null
   procedure: ProcedureList
   status: ProcedureStatus
   actor: number | null

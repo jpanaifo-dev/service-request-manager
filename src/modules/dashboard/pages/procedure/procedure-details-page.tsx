@@ -34,6 +34,7 @@ interface PageProps {
 
 export const ProcedureDetailsPage = (props: PageProps) => {
   const { procedureDetails, procedureTracking } = props
+  console.log('ProcedureDetailsPage', procedureDetails, procedureTracking)
 
   if (!procedureDetails) {
     return (
@@ -240,8 +241,8 @@ export const ProcedureDetailsPage = (props: PageProps) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {procedureTracking && procedureTracking.length > 0 ? (
-                    procedureTracking.map((tracking, index) => (
+                  {procedureTracking && procedureTracking?.length > 0 ? (
+                    procedureTracking?.map((tracking, index) => (
                       <div
                         key={tracking.id}
                         className="flex space-x-4"
@@ -271,10 +272,10 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                           </div>
                           <div className="mt-1 text-sm text-gray-600">
                             <p>
-                              <strong>De:</strong> {tracking.from_office.name}
+                              <strong>De:</strong> {tracking?.from_office?.name}
                             </p>
                             <p>
-                              <strong>Para:</strong> {tracking.to_office.name}
+                              <strong>Para:</strong> {tracking?.to_office?.name}
                             </p>
                             <p>
                               <strong>Estado:</strong>{' '}
