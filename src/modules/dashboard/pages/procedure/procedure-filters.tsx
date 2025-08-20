@@ -208,48 +208,6 @@ export const ProcedureFilters = () => {
             </SheetHeader>
 
             <div className="space-y-6 px-4">
-              {/* Basic Filters */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Filtros Básicos
-                </h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="code"
-                      className="text-sm font-medium"
-                    >
-                      Código exacto
-                    </Label>
-                    <Input
-                      id="code"
-                      placeholder="Código del procedimiento"
-                      defaultValue={code}
-                      onChange={(e) =>
-                        handleInputChange('code', e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="code-contains"
-                      className="text-sm font-medium"
-                    >
-                      Código contiene
-                    </Label>
-                    <Input
-                      id="code-contains"
-                      placeholder="Buscar en código"
-                      defaultValue={codeContains}
-                      onChange={(e) =>
-                        handleInputChange('code__icontains', e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* Person Filters */}
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">

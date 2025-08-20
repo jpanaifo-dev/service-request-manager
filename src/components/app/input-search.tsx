@@ -62,7 +62,7 @@ export function InputSearch({
         placeholder={placeholder}
         value={internalValue}
         onChange={handleChange}
-        className="pl-10 h-12 text-base bg-input border-border focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
+        className="pl-10 h-10 text-base bg-white border-border focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
         {...props}
       />
     </div>
