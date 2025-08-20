@@ -26,3 +26,8 @@ export interface ProcedureTrackingDetail extends ProcedureTrackingBase {
   status: ProcedureStatus
   actor: number | null
 }
+
+export interface ProcedureTrackingFilter {
+  id?: number
+  procedure_id?: number
+}

@@ -49,6 +49,11 @@ export const ENDPOINTS_CONFIG = {
       LIST_DETAIL: `${BASE_PATHS.DESK}procedure/list/`,
       DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure/${id}/`,
     },
+    PROCEDURE_TRACKING: {
+      LIST: `${BASE_PATHS.DESK}procedure-tracking/`,
+      LIST_DETAIL: `${BASE_PATHS.DESK}procedure-tracking/list/`,
+      DETAIL: (id: string) => `${BASE_PATHS.DESK}procedure-tracking/${id}/`,
+    },
   },
   ACCOUNTS: {},
   PERSON: {},

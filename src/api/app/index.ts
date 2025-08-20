@@ -1,3 +1,4 @@
 export * from './offices'
 export * from './person'
 export * from './procedure-status'
+export * from './procedure-tracking'
