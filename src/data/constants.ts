@@ -20,7 +20,13 @@ export const APP_URL = {
   },
   DASHBOARD: {
     BASE: `${URL_DASHBOARD}`,
-    SOLICITUDES: `${URL_DASHBOARD}/solicitudes`,
+    SOLICITUDES: {
+      BASE: `${URL_DASHBOARD}/solicitudes`,
+      LIST: `${URL_DASHBOARD}/solicitudes/list`,
+      CREATE: `${URL_DASHBOARD}/solicitudes/create`,
+      DETAIL: (id: string) => `${URL_DASHBOARD}/solicitudes/${id}`,
+      ACTIONS: (id: string) => `${URL_DASHBOARD}/solicitudes/${id}/acciones`,
+    },
     OFFICES: `${URL_DASHBOARD}/oficinas`,
     USERS: `${URL_DASHBOARD}/usuarios`,
     DOCUMENTS_TYPES: `${URL_DASHBOARD}/documentos-tipos`,

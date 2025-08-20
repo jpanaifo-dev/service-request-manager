@@ -13,6 +13,7 @@ import { Eye, Edit, Send } from 'lucide-react'
 import Link from 'next/link'
 import { ProcedureData } from '@/types'
 import { cn } from '@/lib/utils'
+import { APP_URL } from '@/data/constants'
 
 interface ProcedureListPageProps {
   data: ProcedureData[]
@@ -67,7 +68,11 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Link href={`/dashboard/tramites/${procedimiento.id}`}>
+                    <Link
+                      href={APP_URL.DASHBOARD.SOLICITUDES.DETAIL(
+                        procedimiento.id.toString()
+                      )}
+                    >
                       <Button
                         variant="outline"
                         size="sm"

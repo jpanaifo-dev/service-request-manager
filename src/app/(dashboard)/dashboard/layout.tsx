@@ -57,7 +57,7 @@ export default async function Layout(props: LayoutProps) {
                 menu: {
                   id: 2,
                   name: 'Historial de Solicitudes',
-                  url: APP_URL.DASHBOARD.SOLICITUDES,
+                  url: APP_URL.DASHBOARD.SOLICITUDES.BASE,
                   icon: '',
                   description:
                     'Consultar el historial de solicitudes realizadas',

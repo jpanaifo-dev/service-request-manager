@@ -41,6 +41,7 @@ export const fetchProceduresList = async (
       return {
         status: response.status,
         errors: errorMessages,
+        data: INITAL_DATA,
       }
     }
 
