@@ -66,10 +66,15 @@ export const useParamsFilters = () => {
     [searchParams, router, pathname]
   )
 
+  const clearAllFilters = useCallback(() => {
+    router.push(pathname)
+  }, [pathname, router])
+
   return {
     getParams,
     updateFilter,
     createFilter,
     removeFilter,
+    clearAllFilters,
   }
 }

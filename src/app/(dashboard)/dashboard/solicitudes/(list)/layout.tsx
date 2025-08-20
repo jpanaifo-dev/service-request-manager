@@ -1,3 +1,5 @@
+import { ProcedureFilters } from '@/modules/dashboard'
+
 interface IProps {
   children: React.ReactNode
 }
@@ -11,6 +13,7 @@ export default function Layout({ children }: IProps) {
           Aquí puedes gestionar las solicitudes y trámites de tu aplicación.
         </p>
       </div>
+      <ProcedureFilters />
       {children}
     </>
   )
