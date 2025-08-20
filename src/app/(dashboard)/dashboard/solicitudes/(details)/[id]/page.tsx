@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { APP_URL } from '@/data/constants'
+import { fetchProcedureTrackingList } from '@/api/app'
 
 interface PageProps {
   params: {
@@ -39,11 +40,18 @@ export default async function Page(props: PageProps) {
     )
   }
 
+  const procedureTracking = await fetchProcedureTrackingList({
+    procedure_id: Number(procedureId),
+  })
+
   const procedure = procedureDetails.data?.results[0]
 
   return (
     <>
-      <ProcedureDetailsPage procedureDetails={procedure} />
+      <ProcedureDetailsPage
+        procedureDetails={procedure}
+        procedureTracking={procedureTracking.data?.results || []}
+      />
     </>
   )
 }

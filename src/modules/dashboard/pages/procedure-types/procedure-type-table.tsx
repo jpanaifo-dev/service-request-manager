@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
+import { Search, Plus, Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -12,12 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { ProcedureTypeForm } from '../../components/procedure-type-form'
 import { ProcedureType } from '@/types'
@@ -33,7 +27,6 @@ interface ProcedureTypeTableProps {
 
 export function ProcedureTypeTable({
   data,
-  onDelete,
   isLoading = false,
 }: ProcedureTypeTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -61,11 +54,11 @@ export function ProcedureTypeTable({
     setIsFormOpen(true)
   }
 
-  const handleDelete = (id: number) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
-      onDelete?.(id)
-    }
-  }
+  // const handleDelete = (id: number) => {
+  //   if (window.confirm('¿Estás seguro de que deseas eliminar este elemento?')) {
+  //     onDelete?.(id)
+  //   }
+  // }
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-6">
@@ -139,29 +132,14 @@ export function ProcedureTypeTable({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(item)}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(item.id)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Eliminar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))
