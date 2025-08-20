@@ -1,12 +1,18 @@
 import { ProcedureRequestPage } from '@/modules/portal'
-import { fetchProcedureTypeList } from '@/api/app'
+import { fetchProcedureTypeList, fetchDocumentTypeList } from '@/api/app'
 
 export default async function Page() {
-  const [procedureTypes] = await Promise.all([fetchProcedureTypeList()])
+  const [procedureTypes, documentTypes] = await Promise.all([
+    fetchProcedureTypeList(),
+    fetchDocumentTypeList(),
+  ])
 
   return (
     <>
-      <ProcedureRequestPage procedureTypes={procedureTypes.data || []} />
+      <ProcedureRequestPage
+        procedureTypes={procedureTypes.data || []}
+        documentTypes={documentTypes.data || []}
+      />
     </>
   )
 }

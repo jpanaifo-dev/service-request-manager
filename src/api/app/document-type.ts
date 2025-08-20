@@ -2,8 +2,8 @@
 import { fetchServices } from '../core/api-clients'
 import { ENDPOINTS_CONFIG } from '@/lib/endpoints.config'
 import { revalidatePath } from 'next/cache'
-import { DocumentType } from 'next/dist/shared/lib/utils'
 import { DocumentTypeFormData } from '@/schemas/document.schema'
+import { DocumentType } from '@/types'
 
 export const fetchDocumentTypeList = async (): Promise<{
   status: number

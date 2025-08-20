@@ -27,7 +27,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react'
-import { Person, ProcedureType } from '@/types'
+import { DocumentType, Person, ProcedureType } from '@/types'
 import { fetchPersonList } from '@/api/app'
 
 interface Procedure {
@@ -39,21 +39,16 @@ interface Procedure {
   procedure_type: number | null
 }
 
-const documentTypes = [
-  { id: 1, name: 'Cédula de Ciudadanía' },
-  { id: 2, name: 'Tarjeta de Identidad' },
-  { id: 3, name: 'Cédula de Extranjería' },
-  { id: 4, name: 'Pasaporte' },
-]
-
 type Step = 'search' | 'create-person' | 'create-procedure' | 'success'
 
 interface ProcedurePageProps {
   procedureTypes: ProcedureType[]
+  documentTypes?: DocumentType[]
 }
 
 export const ProcedureRequestPage = ({
   procedureTypes,
+  documentTypes = [],
 }: ProcedurePageProps) => {
   const [step, setStep] = useState<Step>('search')
   const [searchDocument, setSearchDocument] = useState('')
@@ -373,7 +368,7 @@ export const ProcedureRequestPage = ({
                       }))
                     }
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent>
@@ -466,7 +461,7 @@ export const ProcedureRequestPage = ({
                       setPersonForm((prev) => ({ ...prev, gender: value }))
                     }
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent>
