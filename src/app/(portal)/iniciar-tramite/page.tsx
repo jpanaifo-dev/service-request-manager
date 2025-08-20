@@ -1,9 +1,18 @@
 import { ProcedureRequestPage } from '@/modules/portal'
+import { fetchProcedureTypeList, fetchOfficesList } from '@/api/app'
 
-export default function Page() {
+export default async function Page() {
+  const [offices, procedureTypes] = await Promise.all([
+    fetchOfficesList(),
+    fetchProcedureTypeList(),
+  ])
+
   return (
     <>
-      <ProcedureRequestPage />
+      <ProcedureRequestPage
+        offices={offices.data || []}
+        procedureTypes={procedureTypes.data || []}
+      />
     </>
   )
 }

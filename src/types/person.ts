@@ -10,7 +10,7 @@ export interface Person {
   cellphone: string
   address: string | null
   document_type: number
-  user: number
+  user?: number | null
 }
 
 export interface PersonFilter {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState } from 'react'
@@ -22,183 +21,276 @@ import {
 } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
-  buscarUsuarioPorDocumento,
-  tiposSolicitud,
-  generarCodigoVerificacion,
-  type User,
-} from '@/lib/data'
-import {
   Search,
-  UserIcon,
+  UserPlus,
   FileText,
-  Send,
   CheckCircle,
-  Info,
-  HelpCircle,
-  Shield,
+  AlertCircle,
 } from 'lucide-react'
+import { IOffices, Person, ProcedureType } from '@/types'
 
-type Step = 'buscar' | 'datos' | 'solicitud' | 'verificacion' | 'confirmacion'
+interface Procedure {
+  id?: number
+  description: string
+  is_active: boolean
+  file: File | null
+  person: number | null
+  procedure_type: number | null
+}
 
-export const ProcedureRequestPage = () => {
-  const [step, setStep] = useState<Step>('buscar')
-  const [documento, setDocumento] = useState('')
-  const [usuario, setUsuario] = useState<User | null>(null)
-  const [emailActual, setEmailActual] = useState('')
-  const [telefonoActual, setTelefonoActual] = useState('')
-  const [tipoSolicitud, setTipoSolicitud] = useState('')
-  const [descripcion, setDescripcion] = useState('')
-  const [archivos, setArchivos] = useState<FileList | null>(null)
-  const [codigoVerificacion, setCodigoVerificacion] = useState('')
-  const [codigoGenerado, setCodigoGenerado] = useState('')
-  const [solicitudId, setSolicitudId] = useState('')
+const documentTypes = [
+  { id: 1, name: 'Cédula de Ciudadanía' },
+  { id: 2, name: 'Tarjeta de Identidad' },
+  { id: 3, name: 'Cédula de Extranjería' },
+  { id: 4, name: 'Pasaporte' },
+]
+
+type Step = 'search' | 'create-person' | 'create-procedure' | 'success'
+
+interface ProcedurePageProps {
+  offices: IOffices[]
+  procedureTypes: ProcedureType[]
+}
+
+export const ProcedureRequestPage = ({
+  offices,
+  procedureTypes,
+}: ProcedurePageProps) => {
+  const [step, setStep] = useState<Step>('search')
+  const [searchDocument, setSearchDocument] = useState('')
+  const [foundPerson, setFoundPerson] = useState<Person | null>(null)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const buscarUsuario = () => {
+  const [personForm, setPersonForm] = useState<Person>({
+    document_number: '',
+    names: '',
+    last_name1: '',
+    last_name2: '',
+    gender: 'F',
+    email: '',
+    cellphone: '',
+    address: '',
+    document_type: 1,
+    user: null,
+    id: 2,
+    uuid: '123e4567-e89b-12d3-a456-426614174000',
+  })
+
+  const [procedureForm, setProcedureForm] = useState<Procedure>({
+    description: '',
+    is_active: false,
+    file: null,
+    person: null,
+    procedure_type: null,
+  })
+
+  const [createdProcedureId, setCreatedProcedureId] = useState<string>('')
+
+  const searchPersonByDocument = async (
+    documentNumber: string
+  ): Promise<Person | null> => {
+    setLoading(true)
     setError('')
-    const usuarioEncontrado = buscarUsuarioPorDocumento(documento)
 
-    if (usuarioEncontrado) {
-      setUsuario(usuarioEncontrado)
-      setEmailActual(usuarioEncontrado.email)
-      setTelefonoActual(usuarioEncontrado.telefono)
-      setStep('datos')
-    } else {
-      setError('No se encontró un usuario con ese número de documento')
-    }
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Mock data - in real app this would be an API call
+    const mockPersons: Person[] = [
+      {
+        id: 1,
+        document_number: '12345678',
+        names: 'Juan Carlos',
+        last_name1: 'Pérez',
+        last_name2: 'González',
+        gender: 'M',
+        email: 'juan.perez@email.com',
+        cellphone: '3001234567',
+        address: 'Calle 123 #45-67',
+        document_type: 1,
+        user: 1,
+        uuid: '123e4567-e89b-12d3-a456-426614174000',
+      },
+      {
+        id: 2,
+        document_number: '87654321',
+        names: 'María Elena',
+        last_name1: 'García',
+        last_name2: 'López',
+        gender: 'F',
+        email: 'maria.garcia@email.com',
+        cellphone: '3009876543',
+        address: 'Carrera 45 #12-34',
+        document_type: 1,
+        user: 2,
+        uuid: '123e4567-e89b-12d3-a456-426614174001',
+      },
+    ]
+
+    const person = mockPersons.find((p) => p.document_number === documentNumber)
+    setLoading(false)
+    return person || null
   }
 
-  const continuarConDatos = () => {
-    if (!emailActual || !telefonoActual) {
-      setError('Por favor completa todos los campos')
+  const handleSearchPerson = async () => {
+    if (!searchDocument.trim()) {
+      setError('Por favor ingresa un número de documento')
       return
     }
-    setError('')
-    setStep('solicitud')
+
+    const person = await searchPersonByDocument(searchDocument.trim())
+
+    if (person) {
+      setFoundPerson(person)
+      setProcedureForm((prev) => ({ ...prev, person: person.id || null }))
+      setStep('create-procedure')
+    } else {
+      setFoundPerson(null)
+      setPersonForm((prev) => ({
+        ...prev,
+        document_number: searchDocument.trim(),
+      }))
+      setStep('create-person')
+    }
   }
 
-  const enviarSolicitud = () => {
-    if (!tipoSolicitud || !descripcion) {
+  const handleCreatePerson = async () => {
+    setError('')
+
+    // Validate required fields
+    if (
+      !personForm.names ||
+      !personForm.last_name1 ||
+      !personForm.email ||
+      !personForm.cellphone ||
+      !personForm.document_type
+    ) {
       setError('Por favor completa todos los campos obligatorios')
       return
     }
 
-    const codigo = generarCodigoVerificacion()
-    setCodigoGenerado(codigo)
-    setError('')
+    setLoading(true)
 
-    alert(
-      `Código de verificación enviado: ${codigo}\n\n💡 Para esta demostración, el código siempre es: 1122`
-    )
-    setStep('verificacion')
+    // Simulate API call to create person
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Mock created person with ID
+    const createdPerson: Person = {
+      ...personForm,
+      id: Math.floor(Math.random() * 1000) + 100,
+    }
+
+    setFoundPerson(createdPerson)
+    setProcedureForm((prev) => ({ ...prev, person: createdPerson.id || null }))
+    setLoading(false)
+    setStep('create-procedure')
   }
 
-  const verificarCodigo = () => {
-    if (codigoVerificacion !== codigoGenerado) {
-      setError('Código de verificación incorrecto')
+  const handleCreateProcedure = async () => {
+    setError('')
+
+    if (!procedureForm.description || !procedureForm.procedure_type) {
+      setError('Por favor completa todos los campos obligatorios')
       return
     }
 
-    // Generar ID de solicitud
-    const id = `SOL-${Date.now().toString().slice(-6)}`
-    setSolicitudId(id)
-    setError('')
-    setStep('confirmacion')
+    setLoading(true)
+
+    // Simulate API call to create procedure
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Generate procedure ID
+    const procedureId = `PROC-${Date.now().toString().slice(-6)}`
+    setCreatedProcedureId(procedureId)
+
+    setLoading(false)
+    setStep('success')
   }
 
-  const reiniciar = () => {
-    setStep('buscar')
-    setDocumento('')
-    setUsuario(null)
-    setEmailActual('')
-    setTelefonoActual('')
-    setTipoSolicitud('')
-    setDescripcion('')
-    setArchivos(null)
-    setCodigoVerificacion('')
-    setCodigoGenerado('')
-    setSolicitudId('')
+  const handleSearchAnother = () => {
+    setSearchDocument('')
+    setFoundPerson(null)
     setError('')
+    setPersonForm({
+      document_number: '',
+      names: '',
+      last_name1: '',
+      last_name2: '',
+      email: '',
+      cellphone: '',
+      address: '',
+      document_type: null,
+      gender: null,
+      user: null,
+      id: null,
+      uuid: null,
+    })
+    setStep('search')
+  }
+
+  const handleReset = () => {
+    setStep('search')
+    setSearchDocument('')
+    setFoundPerson(null)
+    setError('')
+    setPersonForm({
+      document_number: '',
+      names: '',
+      last_name1: '',
+      last_name2: '',
+      gender: '',
+      email: '',
+      cellphone: '',
+      address: '',
+      document_type: 1,
+      user: null,
+      id: 0,
+      uuid: 'some-uuid-placeholder',
+    })
+    setProcedureForm({
+      description: '',
+      is_active: false,
+      file: null,
+      person: null,
+      procedure_type: null,
+    })
+    setCreatedProcedureId('')
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+      <div className="max-w-2xl mx-auto py-8 px-4">
+        <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Portal Ciudadano
+            Solicitud de Trámite
           </h1>
           <p className="text-gray-600">
-            Crea y gestiona tus solicitudes de servicios
+            Registra tu solicitud de manera rápida y segura
           </p>
         </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-blue-800">
-              <Info className="w-5 h-5" />
-              <span>Proceso de Solicitud - Guía Paso a Paso</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-blue-700">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-2">📋 Pasos del Proceso:</h4>
-                <ol className="text-sm space-y-1 list-decimal list-inside">
-                  <li>
-                    <strong>Identificación:</strong> Ingresa tu documento
-                  </li>
-                  <li>
-                    <strong>Datos:</strong> Verifica tu información personal
-                  </li>
-                  <li>
-                    <strong>Solicitud:</strong> Completa los detalles
-                  </li>
-                  <li>
-                    <strong>Verificación:</strong> Confirma con código 1122
-                  </li>
-                  <li>
-                    <strong>Confirmación:</strong> Recibe tu número de
-                    seguimiento
-                  </li>
-                </ol>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">
-                  🔐 Información de Seguridad:
-                </h4>
-                <div className="text-sm space-y-1">
-                  <p>
-                    • Código de verificación: <strong>1122</strong>
-                  </p>
-                  <p>• Documentos de prueba disponibles</p>
-                  <p>• Proceso 100% seguro y encriptado</p>
-                  <p>• Seguimiento en tiempo real</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Progress Steps */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center space-x-4">
             {[
-              { key: 'buscar', label: 'Identificación', icon: Search },
-              { key: 'datos', label: 'Datos', icon: UserIcon },
-              { key: 'solicitud', label: 'Solicitud', icon: FileText },
-              { key: 'verificacion', label: 'Verificación', icon: Send },
-              { key: 'confirmacion', label: 'Confirmación', icon: CheckCircle },
+              { key: 'search', label: 'Buscar Persona', icon: Search },
+              { key: 'create-person', label: 'Crear Persona', icon: UserPlus },
+              {
+                key: 'create-procedure',
+                label: 'Crear Solicitud',
+                icon: FileText,
+              },
+              { key: 'success', label: 'Confirmación', icon: CheckCircle },
             ].map((stepItem, index) => {
               const Icon = stepItem.icon
               const isActive = step === stepItem.key
               const isCompleted =
                 [
-                  'buscar',
-                  'datos',
-                  'solicitud',
-                  'verificacion',
-                  'confirmacion',
+                  'search',
+                  'create-person',
+                  'create-procedure',
+                  'success',
                 ].indexOf(step) > index
 
               return (
@@ -218,7 +310,7 @@ export const ProcedureRequestPage = () => {
                     <Icon className="w-5 h-5" />
                   </div>
                   <span
-                    className={`text-sm mt-2 ${
+                    className={`text-xs mt-1 text-center ${
                       isActive ? 'text-blue-600 font-medium' : 'text-gray-500'
                     }`}
                   >
@@ -232,362 +324,369 @@ export const ProcedureRequestPage = () => {
 
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="w-4 h-4" />
             <AlertDescription className="text-red-800">
               {error}
             </AlertDescription>
           </Alert>
         )}
 
-        {/* Step 1: Buscar Usuario */}
-        {step === 'buscar' && (
+        {/* Step 1: Search Person */}
+        {step === 'search' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Search className="w-5 h-5" />
-                <span>Paso 1: Identificación</span>
+                <span>Buscar Persona</span>
               </CardTitle>
               <CardDescription>
-                Ingresa tu número de documento para acceder a tus datos
+                Ingresa el número de documento para buscar la persona
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert className="border-green-200 bg-green-50">
-                <HelpCircle className="w-4 h-4" />
-                <AlertDescription className="text-green-800">
-                  <strong>Instrucciones:</strong> Ingresa tu número de documento
-                  de identidad sin puntos ni espacios. El sistema buscará
-                  automáticamente tu información registrada.
-                </AlertDescription>
-              </Alert>
-
               <div>
-                <Label htmlFor="documento">Número de Documento</Label>
+                <Label htmlFor="search-document">Número de Documento</Label>
                 <Input
-                  id="documento"
-                  value={documento.trim()}
-                  onChange={(e) => setDocumento(e.target.value.trim())}
+                  id="search-document"
+                  value={searchDocument}
+                  onChange={(e) => setSearchDocument(e.target.value)}
                   placeholder="Ej: 12345678"
                   className="mt-1"
                 />
-                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 font-medium mb-1">
-                    📋 Documentos de prueba disponibles:
-                  </p>
-                  <div className="text-sm text-gray-500 space-y-1">
-                    <p>
-                      <strong>12345678</strong> - Juan Pérez (Cédula activa)
-                    </p>
-                    <p>
-                      <strong>87654321</strong> - María García (Cédula activa)
-                    </p>
-                    <p>
-                      <strong>11223344</strong> - Carlos López (Cédula activa)
-                    </p>
-                  </div>
-                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Documentos de prueba: 12345678, 87654321
+                </p>
               </div>
               <Button
-                onClick={buscarUsuario}
+                onClick={handleSearchPerson}
+                disabled={loading}
                 className="w-full"
               >
                 <Search className="w-4 h-4 mr-2" />
-                Buscar Datos
+                {loading ? 'Buscando...' : 'Buscar Persona'}
               </Button>
             </CardContent>
           </Card>
         )}
 
-        {/* Step 2: Datos del Usuario */}
-        {step === 'datos' && usuario && (
+        {/* Step 2: Create Person */}
+        {step === 'create-person' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <UserIcon className="w-5 h-5" />
-                <span>Paso 2: Verificación de Datos</span>
+                <UserPlus className="w-5 h-5" />
+                <span>Crear Nueva Persona</span>
               </CardTitle>
               <CardDescription>
-                Verifica y actualiza tu información de contacto
+                No se encontró una persona con el documento{' '}
+                {personForm.document_number}. Completa los datos para crearla.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert className="border-blue-200 bg-blue-50">
-                <Info className="w-4 h-4" />
-                <AlertDescription className="text-blue-800">
-                  <strong>Instrucciones:</strong> Revisa que tu información sea
-                  correcta. Puedes actualizar tu email y teléfono si han
-                  cambiado. Estos datos se usarán para enviarte notificaciones
-                  sobre tu solicitud.
-                </AlertDescription>
-              </Alert>
-
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Nombre Completo</Label>
+                  <Label htmlFor="names">Nombres *</Label>
                   <Input
-                    value={`${usuario.nombre} ${usuario.apellido}`}
-                    disabled
+                    id="names"
+                    value={personForm.names}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        names: e.target.value,
+                      }))
+                    }
+                    placeholder="Juan Carlos"
                     className="mt-1"
                   />
                 </div>
                 <div>
-                  <Label>Documento</Label>
+                  <Label htmlFor="document-type">Tipo de Documento *</Label>
+                  <Select
+                    value={personForm.document_type?.toString() || ''}
+                    onValueChange={(value) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        document_type: Number.parseInt(value),
+                      }))
+                    }
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {documentTypes.map((type) => (
+                        <SelectItem
+                          key={type.id}
+                          value={type.id.toString()}
+                        >
+                          {type.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="last-name1">Primer Apellido *</Label>
                   <Input
-                    value={usuario.documento}
-                    disabled
+                    id="last-name1"
+                    value={personForm.last_name1}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        last_name1: e.target.value,
+                      }))
+                    }
+                    placeholder="Pérez"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="last-name2">Segundo Apellido</Label>
+                  <Input
+                    id="last-name2"
+                    value={personForm.last_name2}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        last_name2: e.target.value,
+                      }))
+                    }
+                    placeholder="González"
                     className="mt-1"
                   />
                 </div>
               </div>
 
-              <div>
-                <Label>Dirección</Label>
-                <Input
-                  value={usuario.direccion}
-                  disabled
-                  className="mt-1"
-                />
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email Actual *</Label>
+                  <Label htmlFor="email">Email *</Label>
                   <Input
                     id="email"
                     type="email"
-                    value={emailActual}
-                    onChange={(e) => setEmailActual(e.target.value)}
+                    value={personForm.email}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
+                    placeholder="juan@email.com"
                     className="mt-1"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Se enviará el código de verificación aquí
-                  </p>
                 </div>
                 <div>
-                  <Label htmlFor="telefono">Teléfono Actual *</Label>
+                  <Label htmlFor="cellphone">Teléfono *</Label>
                   <Input
-                    id="telefono"
-                    value={telefonoActual}
-                    onChange={(e) => setTelefonoActual(e.target.value)}
+                    id="cellphone"
+                    value={personForm.cellphone}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        cellphone: e.target.value,
+                      }))
+                    }
+                    placeholder="3001234567"
                     className="mt-1"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    También recibirás notificaciones por SMS
-                  </p>
                 </div>
               </div>
 
-              <Button
-                onClick={continuarConDatos}
-                className="w-full"
-              >
-                Continuar con la Solicitud
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="gender">Género</Label>
+                  <Select
+                    value={personForm.gender || ''}
+                    onValueChange={(value) =>
+                      setPersonForm((prev) => ({ ...prev, gender: value }))
+                    }
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Seleccionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="M">Masculino</SelectItem>
+                      <SelectItem value="F">Femenino</SelectItem>
+                      <SelectItem value="O">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="address">Dirección</Label>
+                  <Input
+                    id="address"
+                    value={personForm.address || ''}
+                    onChange={(e) =>
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        address: e.target.value,
+                      }))
+                    }
+                    placeholder="Calle 123 #45-67"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <Button
+                  onClick={handleSearchAnother}
+                  variant="outline"
+                  className="flex-1 bg-transparent"
+                >
+                  Buscar Otro Documento
+                </Button>
+                <Button
+                  onClick={handleCreatePerson}
+                  disabled={loading}
+                  className="flex-1"
+                >
+                  {loading ? 'Creando...' : 'Crear Persona'}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Step 3: Crear Solicitud */}
-        {step === 'solicitud' && (
+        {/* Step 3: Create Procedure */}
+        {step === 'create-procedure' && foundPerson && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
-                <span>Paso 3: Detalles de la Solicitud</span>
+                <span>Registrar Solicitud</span>
               </CardTitle>
               <CardDescription>
-                Completa los detalles de tu solicitud
+                Solicitud para: {foundPerson.names} {foundPerson.last_name1}{' '}
+                {foundPerson.last_name2}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert className="border-yellow-200 bg-yellow-50">
-                <FileText className="w-4 h-4" />
-                <AlertDescription className="text-yellow-800">
-                  <strong>Instrucciones:</strong> Selecciona el tipo de
-                  solicitud y describe detalladamente tu requerimiento. Puedes
-                  adjuntar documentos de apoyo en formatos PDF, DOC, DOCX, JPG o
-                  PNG.
+              <Alert className="border-blue-200 bg-blue-50">
+                <AlertDescription className="text-blue-800">
+                  <strong>Persona:</strong> {foundPerson.names}{' '}
+                  {foundPerson.last_name1} {foundPerson.last_name2} -{' '}
+                  {foundPerson.document_number}
                 </AlertDescription>
               </Alert>
 
               <div>
-                <Label htmlFor="tipo">Tipo de Solicitud *</Label>
+                <Label htmlFor="procedure-type">Tipo de Trámite *</Label>
                 <Select
-                  value={tipoSolicitud}
-                  onValueChange={setTipoSolicitud}
+                  value={procedureForm.procedure_type?.toString() || ''}
+                  onValueChange={(value) =>
+                    setProcedureForm((prev) => ({
+                      ...prev,
+                      procedure_type: Number.parseInt(value),
+                    }))
+                  }
                 >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Selecciona el tipo de solicitud" />
+                    <SelectValue placeholder="Seleccionar tipo de trámite" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposSolicitud.map((tipo) => (
+                    {procedureTypes.map((type) => (
                       <SelectItem
-                        key={tipo}
-                        value={tipo}
+                        key={type.id}
+                        value={type.id.toString()}
                       >
-                        {tipo}
+                        {type.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-500 mt-1">
-                  Elige la opción que mejor describa tu necesidad
-                </p>
               </div>
 
               <div>
-                <Label htmlFor="descripcion">Descripción Detallada *</Label>
+                <Label htmlFor="description">Descripción *</Label>
                 <Textarea
-                  id="descripcion"
-                  value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
-                  placeholder="Describe detalladamente tu solicitud, incluyendo fechas, lugares, personas involucradas y cualquier información relevante..."
-                  className="mt-1 min-h-[120px]"
+                  id="description"
+                  value={procedureForm.description}
+                  onChange={(e) =>
+                    setProcedureForm((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  placeholder="Describe detalladamente tu solicitud..."
+                  className="mt-1 min-h-[100px]"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Sé específico: entre más detalles proporciones, más rápido
-                  podremos procesar tu solicitud
-                </p>
               </div>
 
               <div>
-                <Label htmlFor="archivos">Documentos Adjuntos (Opcional)</Label>
+                <Label htmlFor="file">Archivo Adjunto (Opcional)</Label>
                 <Input
-                  id="archivos"
+                  id="file"
                   type="file"
-                  multiple
-                  onChange={(e) => setArchivos(e.target.files)}
+                  onChange={(e) =>
+                    setProcedureForm((prev) => ({
+                      ...prev,
+                      file: e.target.files?.[0] || null,
+                    }))
+                  }
                   className="mt-1"
                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                 />
-                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600 font-medium mb-1">
-                    📎 Información sobre archivos:
-                  </p>
-                  <ul className="text-xs text-gray-500 space-y-1">
-                    <li>• Formatos permitidos: PDF, DOC, DOCX, JPG, PNG</li>
-                    <li>• Tamaño máximo: 5MB por archivo</li>
-                    <li>• Puedes subir múltiples archivos</li>
-                    <li>• Los documentos ayudan a acelerar el proceso</li>
-                  </ul>
-                </div>
               </div>
 
-              <Button
-                onClick={enviarSolicitud}
-                className="w-full"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                Enviar Solicitud
-              </Button>
+              <div className="flex space-x-3">
+                <Button
+                  onClick={handleSearchAnother}
+                  variant="outline"
+                  className="flex-1 bg-transparent"
+                >
+                  Buscar Otra Persona
+                </Button>
+                <Button
+                  onClick={handleCreateProcedure}
+                  disabled={loading}
+                  className="flex-1"
+                >
+                  {loading ? 'Registrando...' : 'Registrar Solicitud'}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Step 4: Verificación */}
-        {step === 'verificacion' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="w-5 h-5" />
-                <span>Paso 4: Verificación de Identidad</span>
-              </CardTitle>
-              <CardDescription>
-                Confirma tu identidad con el código de verificación
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert className="border-green-200 bg-green-50">
-                <Shield className="w-4 h-4" />
-                <AlertDescription className="text-green-800">
-                  <strong>Código de Verificación:</strong> Para esta
-                  demostración, el código siempre es <strong>1122</strong>. En
-                  el sistema real, recibirías un código único por email y SMS.
-                </AlertDescription>
-              </Alert>
-
-              <Alert className="border-blue-200 bg-blue-50">
-                <AlertDescription className="text-blue-800">
-                  Se ha enviado un código de verificación a{' '}
-                  <strong>{emailActual}</strong> y{' '}
-                  <strong>{telefonoActual}</strong>
-                </AlertDescription>
-              </Alert>
-
-              <div>
-                <Label htmlFor="codigo">Código de Verificación</Label>
-                <Input
-                  id="codigo"
-                  value={codigoVerificacion}
-                  onChange={(e) => setCodigoVerificacion(e.target.value)}
-                  placeholder="Ingresa: 1122"
-                  className="mt-1 text-center text-lg tracking-widest"
-                  maxLength={4}
-                />
-                <p className="text-sm text-gray-500 mt-1 text-center">
-                  💡 <strong>Código de prueba:</strong> 1122
-                </p>
-              </div>
-
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 font-medium mb-1">
-                  🔐 ¿Por qué verificamos tu identidad?
-                </p>
-                <ul className="text-xs text-gray-500 space-y-1">
-                  <li>• Proteger tus datos personales</li>
-                  <li>• Evitar solicitudes fraudulentas</li>
-                  <li>• Garantizar que solo tú puedas hacer solicitudes</li>
-                  <li>• Cumplir con normativas de seguridad</li>
-                </ul>
-              </div>
-
-              <Button
-                onClick={verificarCodigo}
-                className="w-full"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Verificar Código
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 5: Confirmación */}
-        {step === 'confirmacion' && (
+        {/* Step 4: Success */}
+        {step === 'success' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2 text-green-600">
                 <CheckCircle className="w-5 h-5" />
-                <span>¡Solicitud Creada Exitosamente!</span>
+                <span>¡Solicitud Registrada Exitosamente!</span>
               </CardTitle>
               <CardDescription>
-                Tu solicitud ha sido registrada y está siendo procesada
+                Tu solicitud ha sido creada y está siendo procesada
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert className="border-green-200 bg-green-50">
                 <CheckCircle className="w-4 h-4" />
                 <AlertDescription className="text-green-800">
-                  <strong>¡Solicitud registrada!</strong> Tu número de
-                  seguimiento es: <strong>{solicitudId}</strong>
+                  <strong>ID de Solicitud:</strong> {createdProcedureId}
                 </AlertDescription>
               </Alert>
 
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                <h3 className="font-semibold text-gray-900">
-                  📋 Resumen de tu Solicitud:
-                </h3>
+                <h3 className="font-semibold text-gray-900">Resumen:</h3>
                 <p>
-                  <strong>ID:</strong> {solicitudId}
+                  <strong>Solicitante:</strong> {foundPerson?.names}{' '}
+                  {foundPerson?.last_name1}
                 </p>
                 <p>
-                  <strong>Tipo:</strong> {tipoSolicitud}
+                  <strong>Documento:</strong> {foundPerson?.document_number}
                 </p>
                 <p>
-                  <strong>Solicitante:</strong> {usuario?.nombre}{' '}
-                  {usuario?.apellido}
-                </p>
-                <p>
-                  <strong>Documento:</strong> {usuario?.documento}
+                  <strong>Tipo:</strong>{' '}
+                  {
+                    procedureTypes.find(
+                      (t) => t.id === procedureForm.procedure_type
+                    )?.name
+                  }
                 </p>
                 <p>
                   <strong>Estado:</strong>{' '}
@@ -595,73 +694,14 @@ export const ProcedureRequestPage = () => {
                     Pendiente
                   </span>
                 </p>
-                <p>
-                  <strong>Fecha:</strong>{' '}
-                  {new Date().toLocaleDateString('es-CO')}
-                </p>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium mb-2">
-                  📬 ¿Qué sigue ahora?
-                </p>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>
-                    <strong>1.</strong> Tu solicitud será revisada por nuestro
-                    equipo especializado
-                  </li>
-                  <li>
-                    <strong>2.</strong> Recibirás notificaciones por email sobre
-                    cada cambio de estado
-                  </li>
-                  <li>
-                    <strong>3.</strong> Puedes consultar el progreso en
-                    cualquier momento con tu documento
-                  </li>
-                  <li>
-                    <strong>4.</strong> El tiempo de respuesta típico es de 3-5
-                    días hábiles
-                  </li>
-                </ul>
-              </div>
-
-              <div className="p-4 bg-yellow-50 rounded-lg">
-                <p className="text-sm text-yellow-800 font-medium mb-2">
-                  ⏰ Tiempos de Respuesta Estimados:
-                </p>
-                <div className="text-sm text-yellow-700 space-y-1">
-                  <p>
-                    • <strong>Certificados:</strong> 1-2 días hábiles
-                  </p>
-                  <p>
-                    • <strong>Permisos:</strong> 3-5 días hábiles
-                  </p>
-                  <p>
-                    • <strong>Licencias:</strong> 5-10 días hábiles
-                  </p>
-                  <p>
-                    • <strong>Otros trámites:</strong> 3-7 días hábiles
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={reiniciar}
-                  variant="outline"
-                  className="flex-1 bg-transparent"
-                >
-                  Nueva Solicitud
-                </Button>
-                <Button
-                  asChild
-                  className="flex-1"
-                >
-                  <a href={`/consulta?documento=${usuario?.documento}`}>
-                    Consultar Estado
-                  </a>
-                </Button>
-              </div>
+              <Button
+                onClick={handleReset}
+                className="w-full"
+              >
+                Nueva Solicitud
+              </Button>
             </CardContent>
           </Card>
         )}
