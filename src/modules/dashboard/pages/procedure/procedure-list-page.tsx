@@ -30,7 +30,7 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 bg-white py-6 rounded-lg">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
