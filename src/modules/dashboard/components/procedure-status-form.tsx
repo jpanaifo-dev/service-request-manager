@@ -47,6 +47,7 @@ export function ProcedureStatusForm({
       name: initialData?.name || '',
       description: initialData?.description || '',
       is_active: initialData?.is_active || false,
+      color: initialData?.color || '#000000',
     },
   })
 
@@ -56,6 +57,7 @@ export function ProcedureStatusForm({
         name: initialData.name,
         description: initialData.description,
         is_active: initialData.is_active,
+        color: initialData.color,
       })
     }
   }, [initialData, form])
@@ -158,6 +160,23 @@ export function ProcedureStatusForm({
                       placeholder="Ingresa la descripción"
                       className="resize-none"
                       rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Color</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="color"
                       {...field}
                     />
                   </FormControl>

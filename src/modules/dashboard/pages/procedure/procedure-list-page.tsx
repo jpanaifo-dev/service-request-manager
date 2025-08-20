@@ -51,7 +51,7 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
                   colSpan={6}
                   className="text-center min-h-[400px] text-gray-500 justify-center items-center"
                 >
-                  <div className="flex flex-col items-center justify-center h-full">
+                  <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
                     No hay procedimientos disponibles.
                   </div>
                 </TableCell>

@@ -16,6 +16,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { ProcedureStatusForm } from '@/modules/dashboard/components'
 import { ProcedureStatus } from '@/types'
+import { cn } from '@/lib/utils'
 
 interface ProcedureStatusTableProps {
   data: ProcedureStatus[]
@@ -87,6 +88,7 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
               <TableHead>ID</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Descripción</TableHead>
+              <TableHead>Etiqueta</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
@@ -115,7 +117,21 @@ export function ProcedureStatusTable({ data }: ProcedureStatusTableProps) {
                     {item.description}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={item.is_active ? 'default' : 'secondary'}>
+                    <div
+                      className="w-14 h-6 border"
+                      style={{ backgroundColor: item.color }}
+                      title={item.color}
+                    ></div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        item.is_active
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800',
+                        'rounded-full'
+                      )}
+                    >
                       {item.is_active ? 'Activo' : 'Inactivo'}
                     </Badge>
                   </TableCell>
