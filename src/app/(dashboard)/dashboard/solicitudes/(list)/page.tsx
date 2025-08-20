@@ -1,5 +1,5 @@
 import { fetchProceduresList } from '@/api/app/procedure'
-import { ProcedureListPage } from '@/modules/dashboard/pages/procedure-list-page'
+import { ProcedureListPage } from '@/modules/dashboard'
 
 export default async function Page() {
   const response = await fetchProceduresList()

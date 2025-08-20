@@ -13,3 +13,4 @@ export {
 export * from './person'
 export * from './procedure-status'
 export * from './procedure-types'
+export * from './procedure'
