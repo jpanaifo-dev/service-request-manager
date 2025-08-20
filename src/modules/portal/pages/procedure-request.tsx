@@ -28,7 +28,8 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { DocumentType, Person, ProcedureType } from '@/types'
-import { fetchPersonList } from '@/api/app'
+import { fetchPersonList, createOrUpdatePerson } from '@/api/app'
+import { IPersonFormData } from '@/schemas'
 
 interface Procedure {
   id?: number
@@ -56,7 +57,7 @@ export const ProcedureRequestPage = ({
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const [personForm, setPersonForm] = useState<Person>({
+  const [personForm, setPersonForm] = useState<IPersonFormData>({
     document_number: '',
     names: '',
     last_name1: '',
@@ -65,8 +66,7 @@ export const ProcedureRequestPage = ({
     email: '',
     cellphone: '',
     address: '',
-    document_type: 1,
-    user: null,
+    document_type: '',
   })
 
   const [procedureForm, setProcedureForm] = useState<Procedure>({
@@ -134,17 +134,21 @@ export const ProcedureRequestPage = ({
 
     setLoading(true)
 
-    // Simulate API call to create person
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
     // Mock created person with ID
-    const createdPerson: Person = {
-      ...personForm,
-      id: Math.floor(Math.random() * 1000) + 100,
-    }
+    const responsePerson = await createOrUpdatePerson({
+      data: personForm,
+    })
 
-    setFoundPerson(createdPerson)
-    setProcedureForm((prev) => ({ ...prev, person: createdPerson.id || null }))
+    if (responsePerson.status !== 200) {
+      setError('Error al crear la persona. Inténtalo de nuevo.')
+      setLoading(false)
+      return
+    }
+    setFoundPerson(responsePerson.data || null)
+    setProcedureForm((prev) => ({
+      ...prev,
+      person: responsePerson.data?.id || null,
+    }))
     setLoading(false)
     setStep('create-procedure')
   }
@@ -181,10 +185,9 @@ export const ProcedureRequestPage = ({
       last_name2: '',
       address: '',
       cellphone: '',
-      document_type: null,
+      document_type: '',
       email: '',
       gender: 'F',
-      user: null,
     })
     setStep('search')
   }
@@ -203,8 +206,7 @@ export const ProcedureRequestPage = ({
       email: '',
       cellphone: '',
       address: '',
-      document_type: null,
-      user: null,
+      document_type: '',
     })
     setProcedureForm({
       description: '',
@@ -367,7 +369,7 @@ export const ProcedureRequestPage = ({
                     onValueChange={(value) =>
                       setPersonForm((prev) => ({
                         ...prev,
-                        document_type: Number.parseInt(value),
+                        document_type: value,
                       }))
                     }
                   >
