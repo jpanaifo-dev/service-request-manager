@@ -333,7 +333,10 @@ export const ProcedureRequestPage = ({
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <UserPlus className="w-5 h-5" />
-                <span>Crear Nueva Persona</span>
+                <span>
+                  Registra tus datos personales.
+                  <span className="text-red-500">*</span>
+                </span>
               </CardTitle>
               <CardDescription>
                 No se encontró una persona con el documento{' '}
