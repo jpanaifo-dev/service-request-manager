@@ -6,6 +6,8 @@ import {
   IResApi,
   ProcedureTrackingFilter,
 } from '@/types'
+import { TrackingFormData } from '@/schemas/procedureTracking'
+import { revalidatePath } from 'next/cache'
 
 const INITIAL_DATA: IResApi<ProcedureTrackingDetail> = {
   count: 0,
@@ -57,6 +59,46 @@ export const fetchProcedureTrackingList = async (
       status: 500,
       errors: ['Error connecting to the server.'],
       data: INITIAL_DATA,
+    }
+  }
+}
+
+export const createProcedureTracking = async ({
+  formData,
+}: {
+  formData: TrackingFormData
+}): Promise<{
+  status: number
+  data?: ProcedureTrackingDetail
+  errors?: string[]
+}> => {
+  try {
+    const response = await fetchServices.post(
+      ENDPOINTS_CONFIG.DESK.PROCEDURE_TRACKING.LIST,
+      formData
+    )
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      console.error('Error creating procedure tracking:', errorResponse)
+      const errorMessages = errorResponse.non_field_errors || [
+        errorResponse.message || 'Error creating procedure tracking.',
+      ]
+      return {
+        status: response.status,
+        errors: errorMessages,
+      }
+    }
+    const responseData: ProcedureTrackingDetail = await response.json()
+    revalidatePath('/(dashboard)/dashboard/solicitudes/[id]')
+    return {
+      status: response.status,
+      data: responseData,
+    }
+  } catch (error) {
+    console.error('Error making request:', error)
+    return {
+      status: 500,
+      errors: ['Error connecting to the server.'],
     }
   }
 }

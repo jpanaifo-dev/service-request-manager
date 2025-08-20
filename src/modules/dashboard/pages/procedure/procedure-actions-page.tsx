@@ -59,6 +59,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TrackingFormData, trackingSchema } from '@/schemas/procedureTracking'
+import { createProcedureTracking } from '@/api/app'
 
 interface PageProps {
   procedureDetails: ProcedureData | undefined
@@ -110,24 +111,11 @@ export const ProcedureActionsPage = (props: PageProps) => {
     setIsLoading(true)
     try {
       // Here would be the API call to execute the action
-      const response = await fetch('/api/procedures/tracking', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          observations: data.observations,
-          is_current: true,
-          received_at: null,
-          procedure: parseInt(procedureId),
-          from_office: null, // Would be obtained from session
-          to_office: data.to_office || null,
-          status: data.status || null,
-          actor: null, // Would be obtained from session
-        }),
+      const response = await createProcedureTracking({
+        formData: { ...data, procedure: Number(procedureId) },
       })
 
-      if (response.ok) {
+      if (response.data) {
         setMessage({
           type: 'success',
           text: 'Action completed successfully',
