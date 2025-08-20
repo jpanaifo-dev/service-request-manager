@@ -34,6 +34,10 @@ export const ENDPOINTS_CONFIG = {
       LIST: `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}`,
       DETAIL: (id: string) => `${BASE_PATHS.CORE}${MODELS_PATHS.PERSON}${id}/`,
     },
+    DOCUMENT_TYPE: {
+      LIST: `${BASE_PATHS.CORE}document-type/`,
+      DETAIL: (id: string) => `${BASE_PATHS.CORE}document-type/${id}/`,
+    },
   },
   DESK: {
     PROCEDURE_STATUS: {

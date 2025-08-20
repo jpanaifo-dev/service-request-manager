@@ -27,7 +27,8 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react'
-import { IOffices, Person, ProcedureType } from '@/types'
+import { Person, ProcedureType } from '@/types'
+import { fetchPersonList } from '@/api/app'
 
 interface Procedure {
   id?: number
@@ -48,12 +49,10 @@ const documentTypes = [
 type Step = 'search' | 'create-person' | 'create-procedure' | 'success'
 
 interface ProcedurePageProps {
-  offices: IOffices[]
   procedureTypes: ProcedureType[]
 }
 
 export const ProcedureRequestPage = ({
-  offices,
   procedureTypes,
 }: ProcedurePageProps) => {
   const [step, setStep] = useState<Step>('search')
@@ -73,8 +72,6 @@ export const ProcedureRequestPage = ({
     address: '',
     document_type: 1,
     user: null,
-    id: 2,
-    uuid: '123e4567-e89b-12d3-a456-426614174000',
   })
 
   const [procedureForm, setProcedureForm] = useState<Procedure>({
@@ -87,64 +84,34 @@ export const ProcedureRequestPage = ({
 
   const [createdProcedureId, setCreatedProcedureId] = useState<string>('')
 
-  const searchPersonByDocument = async (
-    documentNumber: string
-  ): Promise<Person | null> => {
-    setLoading(true)
-    setError('')
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Mock data - in real app this would be an API call
-    const mockPersons: Person[] = [
-      {
-        id: 1,
-        document_number: '12345678',
-        names: 'Juan Carlos',
-        last_name1: 'Pérez',
-        last_name2: 'González',
-        gender: 'M',
-        email: 'juan.perez@email.com',
-        cellphone: '3001234567',
-        address: 'Calle 123 #45-67',
-        document_type: 1,
-        user: 1,
-        uuid: '123e4567-e89b-12d3-a456-426614174000',
-      },
-      {
-        id: 2,
-        document_number: '87654321',
-        names: 'María Elena',
-        last_name1: 'García',
-        last_name2: 'López',
-        gender: 'F',
-        email: 'maria.garcia@email.com',
-        cellphone: '3009876543',
-        address: 'Carrera 45 #12-34',
-        document_type: 1,
-        user: 2,
-        uuid: '123e4567-e89b-12d3-a456-426614174001',
-      },
-    ]
-
-    const person = mockPersons.find((p) => p.document_number === documentNumber)
-    setLoading(false)
-    return person || null
-  }
-
   const handleSearchPerson = async () => {
     if (!searchDocument.trim()) {
       setError('Por favor ingresa un número de documento')
       return
     }
 
-    const person = await searchPersonByDocument(searchDocument.trim())
+    const response = await fetchPersonList({
+      document_number: searchDocument.trim(),
+    })
 
-    if (person) {
-      setFoundPerson(person)
-      setProcedureForm((prev) => ({ ...prev, person: person.id || null }))
+    if (response.status === 200 && response.data?.results.length) {
+      setFoundPerson(response.data?.results[0] || null)
+      setProcedureForm((prev) => ({
+        ...prev,
+        person: response.data?.results[0]?.id || null,
+      }))
+
       setStep('create-procedure')
+      setError('')
+    } else if (response.status === 200 && response.data?.results.length === 0) {
+      setError(
+        'No se encontró ninguna persona con ese documento. Por favor, crea una nueva persona.'
+      )
+      setStep('create-person')
+      setPersonForm((prev) => ({
+        ...prev,
+        document_number: searchDocument.trim(),
+      }))
     } else {
       setFoundPerson(null)
       setPersonForm((prev) => ({
@@ -217,14 +184,12 @@ export const ProcedureRequestPage = ({
       names: '',
       last_name1: '',
       last_name2: '',
-      email: '',
-      cellphone: '',
       address: '',
+      cellphone: '',
       document_type: null,
-      gender: null,
+      email: '',
+      gender: 'F',
       user: null,
-      id: null,
-      uuid: null,
     })
     setStep('search')
   }
@@ -243,10 +208,8 @@ export const ProcedureRequestPage = ({
       email: '',
       cellphone: '',
       address: '',
-      document_type: 1,
+      document_type: null,
       user: null,
-      id: 0,
-      uuid: 'some-uuid-placeholder',
     })
     setProcedureForm({
       description: '',
