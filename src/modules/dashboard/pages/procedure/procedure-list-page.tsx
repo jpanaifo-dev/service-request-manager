@@ -44,75 +44,88 @@ export const ProcedureListPage = ({ data }: ProcedureListPageProps) => {
               <TableHead>Acciones</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {data.map((procedimiento) => (
-              <TableRow key={procedimiento.id}>
-                <TableCell className="font-medium">
-                  {procedimiento.code}
-                </TableCell>
-                <TableCell>{procedimiento.description}</TableCell>
-                <TableCell>{procedimiento.procedure_type.name}</TableCell>
-                <TableCell>
-                  <Badge
-                    className={cn(
-                      'cursor-pointer',
-                      obtenerColorEstado(procedimiento.is_active),
-                      'rounded-full'
-                    )}
-                  >
-                    {obtenerTextoEstado(procedimiento.is_active)}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {new Date(procedimiento.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Link
-                      href={APP_URL.DASHBOARD.SOLICITUDES.DETAIL(
-                        procedimiento.id.toString()
-                      )}
-                    >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Eye className="w-3 h-3 mr-1" />
-                        Ver
-                      </Button>
-                    </Link>
-
-                    <Link
-                      href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
-                        procedimiento.id.toString()
-                      )}`}
-                    >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Edit className="w-3 h-3 mr-1" />
-                        Gestionar
-                      </Button>
-                    </Link>
-
-                    <Link
-                      href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
-                        procedimiento.id.toString()
-                      )}?tab=derivar`}
-                    >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Send className="w-3 h-3 mr-1" />
-                        Derivar
-                      </Button>
-                    </Link>
+          <TableBody className="min-h-[400px]">
+            {data.length === 0 && (
+              <TableRow className="bg-white min-h-[400px] justify-center items-center">
+                <TableCell
+                  colSpan={6}
+                  className="text-center min-h-[400px] text-gray-500 justify-center items-center"
+                >
+                  <div className="flex flex-col items-center justify-center h-full">
+                    No hay procedimientos disponibles.
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            )}
+            {data.length > 0 &&
+              data.map((procedimiento) => (
+                <TableRow key={procedimiento.id}>
+                  <TableCell className="font-medium">
+                    {procedimiento.code}
+                  </TableCell>
+                  <TableCell>{procedimiento.description}</TableCell>
+                  <TableCell>{procedimiento.procedure_type.name}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        'cursor-pointer',
+                        obtenerColorEstado(procedimiento.is_active),
+                        'rounded-full'
+                      )}
+                    >
+                      {obtenerTextoEstado(procedimiento.is_active)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(procedimiento.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Link
+                        href={APP_URL.DASHBOARD.SOLICITUDES.DETAIL(
+                          procedimiento.id.toString()
+                        )}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Ver
+                        </Button>
+                      </Link>
+
+                      <Link
+                        href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
+                          procedimiento.id.toString()
+                        )}`}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Edit className="w-3 h-3 mr-1" />
+                          Gestionar
+                        </Button>
+                      </Link>
+
+                      <Link
+                        href={`${APP_URL.DASHBOARD.SOLICITUDES.ACTIONS(
+                          procedimiento.id.toString()
+                        )}?tab=derivar`}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Send className="w-3 h-3 mr-1" />
+                          Derivar
+                        </Button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>
