@@ -5,7 +5,7 @@ export const personSchema = z.object({
   names: z.string().min(1, 'Names are required'),
   last_name1: z.string().optional(),
   last_name2: z.string().optional(),
-  gender: z.string().optional(),
+  gender: z.number().optional(),
   email: z.string().email().optional(),
   cellphone: z.string().optional(),
   address: z.string().optional(),

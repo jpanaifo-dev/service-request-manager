@@ -62,7 +62,7 @@ export const ProcedureRequestPage = ({
     names: '',
     last_name1: '',
     last_name2: '',
-    gender: 'F',
+    gender: 1, // Default
     email: '',
     cellphone: '',
     address: '',
@@ -139,7 +139,7 @@ export const ProcedureRequestPage = ({
       data: personForm,
     })
 
-    if (responsePerson.status !== 200) {
+    if (responsePerson?.status !== 201) {
       setError('Error al crear la persona. Inténtalo de nuevo.')
       setLoading(false)
       return
@@ -187,7 +187,7 @@ export const ProcedureRequestPage = ({
       cellphone: '',
       document_type: '',
       email: '',
-      gender: 'F',
+      gender: 1, // Default
     })
     setStep('search')
   }
@@ -202,7 +202,7 @@ export const ProcedureRequestPage = ({
       names: '',
       last_name1: '',
       last_name2: '',
-      gender: '',
+      gender: 1,
       email: '',
       cellphone: '',
       address: '',
@@ -461,18 +461,20 @@ export const ProcedureRequestPage = ({
                 <div>
                   <Label htmlFor="gender">Género</Label>
                   <Select
-                    value={personForm.gender || ''}
+                    value={personForm?.gender?.toString() || ''}
                     onValueChange={(value) =>
-                      setPersonForm((prev) => ({ ...prev, gender: value }))
+                      setPersonForm((prev) => ({
+                        ...prev,
+                        gender: Number.parseInt(value),
+                      }))
                     }
                   >
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue placeholder="Seleccionar" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="M">Masculino</SelectItem>
-                      <SelectItem value="F">Femenino</SelectItem>
-                      <SelectItem value="O">Otro</SelectItem>
+                      <SelectItem value="1">Masculino</SelectItem>
+                      <SelectItem value="2">Femenino</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

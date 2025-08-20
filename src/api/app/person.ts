@@ -88,6 +88,7 @@ export const createOrUpdatePerson = async ({
         errors: errorMessages,
       }
     }
+    console.log('Response from createOrUpdatePerson:', response)
     const responseData: Person = await response.json()
     revalidatePath(urlRevalidate || '/dashboard/personas')
     return {
