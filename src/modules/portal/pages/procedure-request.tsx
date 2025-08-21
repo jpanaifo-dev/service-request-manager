@@ -1,6 +1,5 @@
 'use client'
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -36,6 +35,8 @@ import {
   createOrUpdateProcedure,
 } from '@/api/app'
 import { IPersonFormData } from '@/schemas'
+import { FileUpload } from '../components/file-upload'
+import { SuccessConfirmation } from './success-confirmation'
 
 interface Procedure {
   id?: number
@@ -68,6 +69,8 @@ export const ProcedureRequestPage = ({
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [loadingPerson, setLoadingPerson] = useState(false)
+  const [loadingFile, setLoadingFile] = useState(false)
+  const [progressFile, setProgressFile] = useState(0)
 
   const [personForm, setPersonForm] = useState<IPersonFormData>({
     document_number: '',
@@ -88,8 +91,6 @@ export const ProcedureRequestPage = ({
     person: null,
     procedure_type: null,
   })
-
-  const [createdProcedureId, setCreatedProcedureId] = useState<string>('')
 
   const handleSearchPerson = async () => {
     if (!searchDocument.trim()) {
@@ -204,7 +205,6 @@ export const ProcedureRequestPage = ({
         setLoading(false)
         return
       }
-      setCreatedProcedureId(response.data?.id?.toString() || '')
       setStep('success')
       setLoading(false)
     } catch (error) {
@@ -256,7 +256,6 @@ export const ProcedureRequestPage = ({
       person: null,
       procedure_type: null,
     })
-    setCreatedProcedureId('')
   }
 
   const handleFileChange = (file: File | null) => {
@@ -268,12 +267,33 @@ export const ProcedureRequestPage = ({
       setError('El archivo no debe exceder los 2MB')
       return
     }
+    setLoadingFile(true)
     setProcedureForm((prev) => ({
       ...prev,
       file: file,
     }))
+    new Promise((resolve) => setTimeout(resolve, 500)).then(() =>
+      setLoadingFile(false)
+    )
     setError('')
   }
+
+  useEffect(() => {
+    if (loadingFile) {
+      let progress = 0
+      const interval = setInterval(() => {
+        progress += 10
+        setProgressFile(progress)
+        if (progress >= 100) {
+          setLoadingFile(false)
+          clearInterval(interval)
+        }
+      }, 100)
+      return () => clearInterval(interval)
+    } else {
+      setProgressFile(0)
+    }
+  }, [loadingFile])
 
   const handleEditProcedure = () => {
     setStep('create-procedure')
@@ -696,7 +716,7 @@ export const ProcedureRequestPage = ({
               </div>
 
               <div>
-                <Label htmlFor="file">Archivo Adjunto (PDF, máx 2MB)</Label>
+                {/* <Label htmlFor="file">Archivo Adjunto (PDF, máx 2MB)</Label>
                 <div
                   className={`border-2 border-dashed rounded-lg p-4 mt-1 flex flex-col items-center justify-center transition-colors duration-200 ${
                     procedureForm.file
@@ -765,7 +785,15 @@ export const ProcedureRequestPage = ({
                       </Button>
                     </div>
                   )}
-                </div>
+                </div> */}
+                <FileUpload
+                  value={procedureForm.file}
+                  onChange={handleFileChange}
+                  progress={progressFile}
+                  disabled={loadingFile || loading}
+                  placeholder="Adjunta un archivo PDF (máx 2MB)"
+                  accept="application/pdf"
+                />
               </div>
 
               <div className="flex space-x-3">
@@ -901,57 +929,12 @@ export const ProcedureRequestPage = ({
 
         {/* Step 5: Success */}
         {step === 'success' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-green-600">
-                <CheckCircle className="w-5 h-5" />
-                <span>¡Solicitud Registrada Exitosamente!</span>
-              </CardTitle>
-              <CardDescription>
-                Tu solicitud ha sido creada y está siendo procesada
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="w-4 h-4" />
-                <AlertDescription className="text-green-800">
-                  <strong>ID de Solicitud:</strong> {createdProcedureId}
-                </AlertDescription>
-              </Alert>
-
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                <h3 className="font-semibold text-gray-900">Resumen:</h3>
-                <p>
-                  <strong>Solicitante:</strong> {foundPerson?.names}{' '}
-                  {foundPerson?.last_name1}
-                </p>
-                <p>
-                  <strong>Documento:</strong> {foundPerson?.document_number}
-                </p>
-                <p>
-                  <strong>Tipo:</strong>{' '}
-                  {
-                    procedureTypes.find(
-                      (t) => t.id === procedureForm.procedure_type
-                    )?.name
-                  }
-                </p>
-                <p>
-                  <strong>Estado:</strong>{' '}
-                  <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">
-                    Pendiente
-                  </span>
-                </p>
-              </div>
-
-              <Button
-                onClick={handleReset}
-                className="w-full"
-              >
-                Nueva Solicitud
-              </Button>
-            </CardContent>
-          </Card>
+          <SuccessConfirmation
+            foundPerson={foundPerson}
+            handleReset={handleReset}
+            procedureForm={procedureForm}
+            procedureTypes={procedureTypes}
+          />
         )}
       </div>
     </div>
