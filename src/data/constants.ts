@@ -14,8 +14,8 @@ export const APP_URL = {
     BASE: '/',
   },
   PORTAL: {
-    START_PROCEDURE: '/portal/iniciar-tramite',
-    SUCCESS_CONFIRMATION: '/portal/confirmacion-exito',
+    START_PROCEDURE: '/iniciar-tramite',
+    CONSULTAR: '/consultar',
   },
   AUTH: {
     LOGIN: '/login',

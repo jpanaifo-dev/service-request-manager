@@ -1,7 +1,7 @@
 'use client'
+import { LOGOS } from '@/assets/brands'
 import { useSidebar, useStore } from '@/hooks'
 import { cn } from '@/lib/utils'
-import { BookOpen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -33,16 +33,11 @@ export const LogoRender = ({
         href={href}
         className="flex items-center gap-4 w-full"
       >
-        <div>
-          <div className="w-10 h-10 bg-emerald-600 rounded-md flex items-center justify-center">
-            <BookOpen className="w-5 h-5" />
-          </div>
-        </div>
         {!nameApp && (
           <Image
-            src="/brands/postgrado_unap_white.webp"
+            src={LOGOS.white.src}
             alt="logo-epg"
-            className="w-52 h-14"
+            className="h-24 w-28"
             width={300}
             height={40}
           />

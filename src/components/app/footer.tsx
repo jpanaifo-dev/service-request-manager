@@ -1,6 +1,5 @@
 import { APP_URL } from '@/data/constants'
 import { Facebook, Linkedin, Mail, Phone, Pin, Clock, X } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { LogoRender } from './logo-render'
 
@@ -80,16 +79,6 @@ export const Footer = () => {
               </Link>
             </li>
           </ul>
-        </div>
-
-        {/* Sección de certificación */}
-        <div>
-          <Image
-            src="/brands/isologo_ims_white.png"
-            alt="SUNEDU"
-            width={200}
-            height={200}
-          />
         </div>
       </div>
       {/* Términos y condiciones */}

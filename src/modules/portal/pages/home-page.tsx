@@ -17,11 +17,11 @@ import {
   CheckCircle,
   Award,
   Lock,
-  Star,
   TrendingUp,
 } from 'lucide-react'
 import { LOGOS } from '@/assets/brands'
 import { APP_URL } from '@/data/constants'
+import { HeroBanner } from './hero-banner'
 
 export const HomePage = () => {
   return (
@@ -68,7 +68,7 @@ export const HomePage = () => {
                   size="lg"
                   className="text-lg px-8 py-4 bg-white/10 border-white/30 text-white hover:bg-white hover:text-slate-900"
                 >
-                  <Link href={APP_URL.PORTAL.SUCCESS_CONFIRMATION}>
+                  <Link href={APP_URL.PORTAL.CONSULTAR}>
                     <Search className="w-5 h-5 mr-2" />
                     Consultar Estado
                   </Link>
@@ -263,112 +263,8 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              Confianza Ciudadana
-            </h2>
-            <p className="text-lg text-slate-600">
-              Lo que dicen los ciudadanos sobre nuestros servicios
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'María González',
-                role: 'Empresaria',
-                comment:
-                  'El proceso fue increíblemente rápido y seguro. Obtuve mi certificado en menos de 2 días.',
-                rating: 5,
-              },
-              {
-                name: 'Carlos Rodríguez',
-                role: 'Arquitecto',
-                comment:
-                  'La plataforma es muy intuitiva. Pude hacer todo el trámite desde mi oficina sin complicaciones.',
-                rating: 5,
-              },
-              {
-                name: 'Ana Martínez',
-                role: 'Comerciante',
-                comment:
-                  'Excelente servicio al cliente y seguimiento en tiempo real. Muy recomendado.',
-                rating: 5,
-              },
-            ].map((testimonio, index) => (
-              <Card
-                key={index}
-                className="bg-white border-0 shadow-md"
-              >
-                <CardContent className="pt-6">
-                  <div className="flex items-center mb-4">
-                    {[...Array(testimonio.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 text-yellow-400 fill-current"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-slate-600 mb-4 italic">
-                    {`"${testimonio.comment}"`}
-                  </p>
-                  <div>
-                    <div className="font-semibold text-slate-900">
-                      {testimonio.name}
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {testimonio.role}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Enhanced CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-800">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Comienza Tu Trámite Ahora
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Únete a miles de ciudadanos que ya confían en nuestra plataforma
-            oficial para sus trámites gubernamentales
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button
-              asChild
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8 py-4 bg-white text-blue-600 hover:bg-blue-50"
-            >
-              <Link href="/portal">
-                <FileText className="w-5 h-5 mr-2" />
-                Acceder al Portal Oficial
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 text-white border-white/30 hover:bg-white hover:text-blue-600 bg-white/10"
-            >
-              <Link href="/consulta">
-                <Search className="w-5 h-5 mr-2" />
-                Consultar Mis Solicitudes
-              </Link>
-            </Button>
-          </div>
-          <p className="text-sm text-blue-200">
-            ✓ Plataforma oficial del gobierno • ✓ Datos 100% seguros • ✓ Soporte
-            24/7
-          </p>
-        </div>
-      </section>
+      <HeroBanner />
     </div>
   )
 }
