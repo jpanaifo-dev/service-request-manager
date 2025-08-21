@@ -26,9 +26,15 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
+  Eye,
+  File,
 } from 'lucide-react'
 import { DocumentType, Person, ProcedureType } from '@/types'
-import { fetchPersonList, createOrUpdatePerson } from '@/api/app'
+import {
+  fetchPersonList,
+  createOrUpdatePerson,
+  createOrUpdateProcedure,
+} from '@/api/app'
 import { IPersonFormData } from '@/schemas'
 
 interface Procedure {
@@ -40,7 +46,12 @@ interface Procedure {
   procedure_type: number | null
 }
 
-type Step = 'search' | 'create-person' | 'create-procedure' | 'success'
+type Step =
+  | 'search'
+  | 'create-person'
+  | 'create-procedure'
+  | 'confirmation'
+  | 'success'
 
 interface ProcedurePageProps {
   procedureTypes: ProcedureType[]
@@ -56,6 +67,7 @@ export const ProcedureRequestPage = ({
   const [foundPerson, setFoundPerson] = useState<Person | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [loadingPerson, setLoadingPerson] = useState(false)
 
   const [personForm, setPersonForm] = useState<IPersonFormData>({
     document_number: '',
@@ -85,6 +97,7 @@ export const ProcedureRequestPage = ({
       return
     }
 
+    setLoadingPerson(true)
     const response = await fetchPersonList({
       document_number: searchDocument.trim(),
     })
@@ -106,15 +119,22 @@ export const ProcedureRequestPage = ({
       setPersonForm((prev) => ({
         ...prev,
         document_number: searchDocument.trim(),
+        document_type: documentTypes.length
+          ? documentTypes[0].id.toString()
+          : '',
       }))
     } else {
       setFoundPerson(null)
       setPersonForm((prev) => ({
         ...prev,
         document_number: searchDocument.trim(),
+        document_type: documentTypes.length
+          ? documentTypes[0].id.toString()
+          : '',
       }))
       setStep('create-person')
     }
+    setLoadingPerson(false)
   }
 
   const handleCreatePerson = async () => {
@@ -161,17 +181,38 @@ export const ProcedureRequestPage = ({
       return
     }
 
+    // Go to confirmation step instead of creating immediately
+    setStep('confirmation')
+  }
+
+  const handleConfirmProcedure = async () => {
     setLoading(true)
 
-    // Simulate API call to create procedure
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const response = await createOrUpdateProcedure({
+        data: {
+          description: procedureForm.description,
+          file: procedureForm.file,
+          is_active: true,
+          person: procedureForm.person,
+          procedure_type: procedureForm.procedure_type,
+        },
+      })
 
-    // Generate procedure ID
-    const procedureId = `PROC-${Date.now().toString().slice(-6)}`
-    setCreatedProcedureId(procedureId)
-
-    setLoading(false)
-    setStep('success')
+      if (response.status !== 201) {
+        setError('Error al registrar la solicitud. Inténtalo de nuevo.')
+        setLoading(false)
+        return
+      }
+      setCreatedProcedureId(response.data?.id?.toString() || '')
+      setStep('success')
+      setLoading(false)
+    } catch (error) {
+      console.error('Error creating procedure:', error)
+      setError('Error al registrar la solicitud. Inténtalo de nuevo.')
+      setLoading(false)
+      return
+    }
   }
 
   const handleSearchAnother = () => {
@@ -185,7 +226,7 @@ export const ProcedureRequestPage = ({
       last_name2: '',
       address: '',
       cellphone: '',
-      document_type: '',
+      document_type: documentTypes.length ? documentTypes[0].id.toString() : '',
       email: '',
       gender: 1, // Default
     })
@@ -206,7 +247,7 @@ export const ProcedureRequestPage = ({
       email: '',
       cellphone: '',
       address: '',
-      document_type: '',
+      document_type: documentTypes.length ? documentTypes[0].id.toString() : '',
     })
     setProcedureForm({
       description: '',
@@ -216,6 +257,44 @@ export const ProcedureRequestPage = ({
       procedure_type: null,
     })
     setCreatedProcedureId('')
+  }
+
+  const handleFileChange = (file: File | null) => {
+    if (file && file.type !== 'application/pdf') {
+      setError('El archivo debe ser un PDF')
+      return
+    }
+    if (file && file.size > 2 * 1024 * 1024) {
+      setError('El archivo no debe exceder los 2MB')
+      return
+    }
+    setProcedureForm((prev) => ({
+      ...prev,
+      file: file,
+    }))
+    setError('')
+  }
+
+  const handleEditProcedure = () => {
+    setStep('create-procedure')
+  }
+
+  // Get procedure type name
+  const getProcedureTypeName = () => {
+    if (!procedureForm.procedure_type) return 'No seleccionado'
+    const type = procedureTypes.find(
+      (t) => t.id === procedureForm.procedure_type
+    )
+    return type ? type.name : 'No seleccionado'
+  }
+
+  // Get document type name
+  const getDocumentTypeName = () => {
+    if (!personForm.document_type) return 'No seleccionado'
+    const type = documentTypes.find(
+      (t) => t.id.toString() === personForm.document_type.toString()
+    )
+    return type ? type.name : 'No seleccionado'
   }
 
   return (
@@ -241,7 +320,8 @@ export const ProcedureRequestPage = ({
                 label: 'Crear Solicitud',
                 icon: FileText,
               },
-              { key: 'success', label: 'Confirmación', icon: CheckCircle },
+              { key: 'confirmation', label: 'Confirmación', icon: Eye },
+              { key: 'success', label: 'Completado', icon: CheckCircle },
             ].map((stepItem, index) => {
               const Icon = stepItem.icon
               const isActive = step === stepItem.key
@@ -250,6 +330,7 @@ export const ProcedureRequestPage = ({
                   'search',
                   'create-person',
                   'create-procedure',
+                  'confirmation',
                   'success',
                 ].indexOf(step) > index
 
@@ -313,17 +394,14 @@ export const ProcedureRequestPage = ({
                   placeholder="Ej: 12345678"
                   className="mt-1"
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                  Documentos de prueba: 12345678, 87654321
-                </p>
               </div>
               <Button
                 onClick={handleSearchPerson}
-                disabled={loading}
+                disabled={loadingPerson}
                 className="w-full"
               >
                 <Search className="w-4 h-4 mr-2" />
-                {loading ? 'Buscando...' : 'Buscar Persona'}
+                {loadingPerson ? 'Buscando...' : 'Buscar Persona'}
               </Button>
             </CardContent>
           </Card>
@@ -529,7 +607,7 @@ export const ProcedureRequestPage = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-white border rounded-lg p-4 mb-4 flex flex-col gap-2 shadow-sm">
+              <div className="bg-white border rounded-lg p-4 mb-4 flex flex-col gap-2">
                 <div className="flex items-center gap-2 mb-2">
                   <UserPlus className="w-4 h-4 text-blue-500" />
                   <span className="font-medium text-gray-900 text-sm">
@@ -585,7 +663,7 @@ export const ProcedureRequestPage = ({
                     }))
                   }
                 >
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger className="mt-1 w-full">
                     <SelectValue placeholder="Seleccionar tipo de trámite" />
                   </SelectTrigger>
                   <SelectContent>
@@ -618,19 +696,76 @@ export const ProcedureRequestPage = ({
               </div>
 
               <div>
-                <Label htmlFor="file">Archivo Adjunto (Opcional)</Label>
-                <Input
-                  id="file"
-                  type="file"
-                  onChange={(e) =>
-                    setProcedureForm((prev) => ({
-                      ...prev,
-                      file: e.target.files?.[0] || null,
-                    }))
-                  }
-                  className="mt-1"
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                />
+                <Label htmlFor="file">Archivo Adjunto (PDF, máx 2MB)</Label>
+                <div
+                  className={`border-2 border-dashed rounded-lg p-4 mt-1 flex flex-col items-center justify-center transition-colors duration-200 ${
+                    procedureForm.file
+                      ? 'border-green-400 bg-green-50'
+                      : 'border-gray-300 bg-gray-100 hover:border-blue-400 hover:bg-blue-50'
+                  }`}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    const file = e.dataTransfer.files?.[0] || null
+                    handleFileChange(file)
+                  }}
+                >
+                  {!procedureForm.file ? (
+                    <>
+                      <span className="text-gray-500 text-sm mb-2">
+                        Arrastra el archivo PDF aquí o haz clic para seleccionar
+                      </span>
+                      <Input
+                        id="file"
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null
+                          handleFileChange(file)
+                        }}
+                      />
+                      <Button
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => {
+                          document.getElementById('file')?.click()
+                        }}
+                      >
+                        Seleccionar Archivo
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="w-full flex flex-col items-center">
+                      <span className="text-green-700 font-medium mb-1">
+                        {procedureForm.file.name}
+                      </span>
+                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+                        <div
+                          className="h-full bg-blue-500 animate-progress"
+                          style={{ width: loading ? '100%' : '0%' }}
+                        />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500"
+                        onClick={() =>
+                          setProcedureForm((prev) => ({
+                            ...prev,
+                            file: null,
+                          }))
+                        }
+                      >
+                        Quitar Archivo
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex space-x-3">
@@ -646,14 +781,125 @@ export const ProcedureRequestPage = ({
                   disabled={loading}
                   className="flex-1"
                 >
-                  {loading ? 'Registrando...' : 'Registrar Solicitud'}
+                  {loading ? 'Registrando...' : 'Continuar a Confirmación'}
                 </Button>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Step 4: Success */}
+        {/* Step 4: Confirmation */}
+        {step === 'confirmation' && foundPerson && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Eye className="w-5 h-5" />
+                <span>Confirmar Solicitud</span>
+              </CardTitle>
+              <CardDescription>
+                Revisa toda la información antes de registrar la solicitud
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-3 text-center">
+                  Vista Previa de la Solicitud
+                </h3>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                      <UserPlus className="w-4 h-4 mr-2 text-blue-500" />
+                      Datos del Solicitante
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <p>
+                        <span className="font-medium">Nombre:</span>{' '}
+                        {foundPerson.names} {foundPerson.last_name1}{' '}
+                        {foundPerson.last_name2}
+                      </p>
+                      <p>
+                        <span className="font-medium">Documento:</span>{' '}
+                        {foundPerson.document_number}
+                      </p>
+                      <p>
+                        <span className="font-medium">Tipo de documento:</span>{' '}
+                        {getDocumentTypeName()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                      <FileText className="w-4 h-4 mr-2 text-blue-500" />
+                      Detalles del Trámite
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <p>
+                        <span className="font-medium">Tipo de trámite:</span>{' '}
+                        {getProcedureTypeName()}
+                      </p>
+                      <p>
+                        <span className="font-medium">Descripción:</span>
+                      </p>
+                      <div className="bg-gray-50 p-3 rounded text-sm mt-1">
+                        {procedureForm.description}
+                      </div>
+                      <p>
+                        <span className="font-medium">Archivo adjunto:</span>
+                      </p>
+                      <div className="flex items-center mt-1">
+                        {procedureForm.file ? (
+                          <div className="flex items-center text-green-600">
+                            <File className="w-4 h-4 mr-1" />
+                            <span className="text-sm">
+                              {procedureForm.file.name}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500">
+                            Ningún archivo adjunto
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <h4 className="font-medium text-yellow-800 mb-2 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-2 text-yellow-600" />
+                  Confirmación requerida
+                </h4>
+                <p className="text-sm text-yellow-700">
+                  Por favor verifica que toda la información es correcta antes
+                  de proceder con el registro. Una vez confirmado, la solicitud
+                  será registrada en el sistema.
+                </p>
+              </div>
+
+              <div className="flex space-x-3">
+                <Button
+                  onClick={handleEditProcedure}
+                  variant="outline"
+                  className="flex-1 bg-transparent"
+                >
+                  Editar Solicitud
+                </Button>
+                <Button
+                  onClick={handleConfirmProcedure}
+                  disabled={loading}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  {loading ? 'Registrando...' : 'Confirmar y Registrar'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 5: Success */}
         {step === 'success' && (
           <Card>
             <CardHeader>
