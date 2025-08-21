@@ -10,19 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { obtenerColorEstado } from '@/lib/data'
-import {
-  Search,
-  FileText,
-  Calendar,
-  AlertCircle,
-  Copy,
-  CheckCircle,
-  Loader2,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-} from 'lucide-react'
+import { Search, AlertCircle, Loader2, User, Mail, Phone } from 'lucide-react'
 import { fetchProceduresList, fetchProcedureTrackingList } from '@/api/app'
 import { ProcedureData, ProcedureTrackingDetail } from '@/types'
 
@@ -35,7 +23,6 @@ export const QueryPage = () => {
   const [loadingTracking, setLoadingTracking] = useState(false)
   const [error, setError] = useState('')
   const [errorTracking, setErrorTracking] = useState('')
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const codigoParam = searchParams.get('codigo')
@@ -96,12 +83,6 @@ export const QueryPage = () => {
     } finally {
       setLoadingTracking(false)
     }
-  }
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   const formatearFecha = (fecha: string) => {
@@ -170,17 +151,14 @@ export const QueryPage = () => {
               </div>
 
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-500 mb-2">Códigos de prueba:</p>
+                <p className="text-xs text-gray-500 mb-2">Ten en cuenta</p>
                 <div className="flex flex-wrap gap-2">
-                  {['PROC-001', 'PROC-002', 'PROC-003'].map((testCode) => (
-                    <button
-                      key={testCode}
-                      onClick={() => setCodigo(testCode)}
-                      className="text-xs px-2 py-1 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
-                    >
-                      {testCode}
-                    </button>
-                  ))}
+                  <span className="text-xs text-gray-600">
+                    El código es sensible a mayúsculas y minúsculas
+                  </span>
+                  <span className="text-xs text-gray-600">
+                    Asegúrate de ingresar el código completo
+                  </span>
                 </div>
               </div>
             </div>
@@ -198,50 +176,8 @@ export const QueryPage = () => {
         )}
 
         {solicitud && (
-          <div className="max-w-2xl mx-auto">
-            <Card className="border-gray-100 shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      {solicitud.procedure_type?.name || 'Tipo no especificado'}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <FileText className="w-3 h-3" />
-                        {solicitud.code}
-                      </span>
-                      <button
-                        onClick={() => copyToClipboard(solicitud.code)}
-                        className="flex items-center gap-1 hover:text-gray-700 transition-colors"
-                      >
-                        {copied ? (
-                          <CheckCircle className="w-3 h-3 text-green-500" />
-                        ) : (
-                          <Copy className="w-3 h-3" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <Badge className={obtenerColorEstado('pendiente')}>
-                    {solicitud.is_active ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                </div>
-
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {solicitud.description || 'Sin descripción'}
-                </p>
-
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {formatearFecha(solicitud.created_at)}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6 border-gray-100">
+          <div className="mx-auto">
+            <Card className="mt-6 border-gray-100 w-full">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">
                   Detalles de la Solicitud
@@ -313,14 +249,6 @@ export const QueryPage = () => {
                         <div className="flex items-center gap-2">
                           <Phone className="w-4 h-4 text-gray-400" />
                           <span>{solicitud.person.cellphone}</span>
-                        </div>
-                      )}
-                      {solicitud.person.address && (
-                        <div className="flex items-center gap-2 md:col-span-2">
-                          <MapPin className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm">
-                            {solicitud.person.address}
-                          </span>
                         </div>
                       )}
                     </div>

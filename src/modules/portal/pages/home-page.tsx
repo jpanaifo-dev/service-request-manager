@@ -24,6 +24,8 @@ import {
   TrendingUp,
   Building,
 } from 'lucide-react'
+import { LOGOS } from '@/assets/brands'
+import { APP_URL } from '@/data/constants'
 
 export const HomePage = () => {
   return (
@@ -34,17 +36,11 @@ export const HomePage = () => {
         <div className="relative max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Building className="w-6 h-6 text-white" />
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="bg-white/20 text-white border-white/30"
-                >
-                  Gobierno Digital Certificado
-                </Badge>
-              </div>
+              <img
+                src={LOGOS.white.src}
+                alt="logo-micro"
+                className="mb-6 h-16 md:h-20 mx-auto lg:mx-0"
+              />
 
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                 Portal Oficial de
@@ -65,7 +61,7 @@ export const HomePage = () => {
                   size="lg"
                   className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4"
                 >
-                  <Link href="/portal">
+                  <Link href={APP_URL.PORTAL.START_PROCEDURE}>
                     <FileText className="w-5 h-5 mr-2" />
                     Iniciar Trámite
                   </Link>
@@ -76,7 +72,7 @@ export const HomePage = () => {
                   size="lg"
                   className="text-lg px-8 py-4 bg-white/10 border-white/30 text-white hover:bg-white hover:text-slate-900"
                 >
-                  <Link href="/consulta">
+                  <Link href={APP_URL.PORTAL.SUCCESS_CONFIRMATION}>
                     <Search className="w-5 h-5 mr-2" />
                     Consultar Estado
                   </Link>

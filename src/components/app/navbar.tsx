@@ -210,28 +210,6 @@ export function Navbar({
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleMobileMenu}
-                  className="py-3 px-5 border rounded-full border-gray-300"
-                >
-                  <motion.div
-                    animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu className="h-6 w-6" />
-                  </motion.div>
-                  <span className="ml-2 text-sm font-medium hidden sm:inline">
-                    Menú
-                  </span>
-                </Button>
-              </motion.div>
-
               {/* Logo */}
               <motion.div
                 className="flex-shrink-0"
@@ -246,12 +224,31 @@ export function Navbar({
                     <img
                       src={logo.image || '/placeholder.svg'}
                       alt="Logo"
-                      className="h-8 w-auto"
+                      className="h-12 w-auto"
                     />
                   ) : (
                     <span className="text-xl font-bold">{logo.text}</span>
                   )}
                 </a>
+              </motion.div>
+
+              <motion.div whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleMobileMenu}
+                  className="py-3 px-5 hover:bg-transparent text-gray-700 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white cursor-pointer"
+                >
+                  <motion.div
+                    animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu className="h-24 w-24" />
+                  </motion.div>
+                  <span className="ml-2 text-lg font-medium hidden sm:inline">
+                    Menú
+                  </span>
+                </Button>
               </motion.div>
             </div>
 

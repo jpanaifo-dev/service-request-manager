@@ -1,158 +1,110 @@
-import { Building, Clock, Mail, MapPin, Phone, Shield } from 'lucide-react'
+import { APP_URL } from '@/data/constants'
+import { Facebook, Linkedin, Mail, Phone, Pin, Clock, X } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import { LogoRender } from './logo-render'
 
 export const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Building className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold">ServiciosGov</span>
+    <footer className="bg-red-800 text-white py-4 sm:pt-20  px-6 border-t border-gray-800">
+      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-4 gap-8 py-6">
+        {/* Sección de la institución */}
+        <div>
+          <LogoRender href={APP_URL.HOME.BASE} />
+          <p className="text-sm mt-2">
+            Formación académica de excelencia para el desarrollo profesional y
+            la investigación.
+          </p>
+          <div className="flex items-center space-x-2 text-xs mt-4">
+            <div>
+              <Pin size={16} />
             </div>
-            <p className="text-slate-400 mb-4">
-              Portal oficial del gobierno para la gestión integral de servicios
-              ciudadanos.
+            <span>Calle Ricardo Palma # 724. Calle Bolognesi # 680.</span>
+          </div>
+          <div className="flex items-center space-x-2 text-xs mt-4">
+            <div>
+              <Clock size={16} />
+            </div>
+            <p>
+              Lunes a Viernes: 8:00 AM - 1:00 PM
+              <br />
             </p>
-            <div className="flex items-center space-x-2 text-sm text-slate-400">
-              <Shield className="w-4 h-4" />
-              <span>Certificado Gov.co</span>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Servicios</h3>
-            <ul className="space-y-2 text-slate-400">
-              <li>
-                <Link
-                  href="/portal"
-                  className="hover:text-white transition-colors"
-                >
-                  Portal Ciudadano
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/consulta"
-                  className="hover:text-white transition-colors"
-                >
-                  Consultar Estado
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/admin"
-                  className="hover:text-white transition-colors"
-                >
-                  Panel Administrativo
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Certificaciones
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Soporte</h3>
-            <ul className="space-y-2 text-slate-400">
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Centro de Ayuda
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Preguntas Frecuentes
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Tutoriales
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Términos y Condiciones
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Contacto Oficial</h3>
-            <ul className="space-y-3 text-slate-400">
-              <li className="flex items-center space-x-2">
-                <Phone className="w-4 h-4" />
-                <span>01-8000-123-456</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>soporte@serviciosgov.co</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4" />
-                <span>Bogotá, Colombia</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Clock className="w-4 h-4" />
-                <span>Lun-Vie 8:00 AM - 6:00 PM</span>
-              </li>
-            </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400 mb-4 md:mb-0">
-              &copy; 2024 ServiciosGov - Gobierno de Colombia. Todos los
-              derechos reservados.
-            </p>
-            <div className="flex items-center space-x-4 text-sm text-slate-400">
-              <a
-                href="#"
-                className="hover:text-white transition-colors"
+        {/* Sección de enlaces principales */}
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Enlaces Principales</h4>
+          <ul className="text-sm space-y-2">
+            <li>
+              <Link
+                href={APP_URL.PORTAL.START_PROCEDURE}
+                className="hover:text-gray-300"
               >
-                Política de Privacidad
-              </a>
-              <span>•</span>
-              <a
-                href="#"
-                className="hover:text-white transition-colors"
-              >
-                Transparencia
-              </a>
-              <span>•</span>
-              <a
-                href="#"
-                className="hover:text-white transition-colors"
-              >
-                Accesibilidad
-              </a>
-            </div>
-          </div>
+                Iniciar Trámite
+              </Link>
+            </li>
+          </ul>
         </div>
+
+        {/* Sección de contacto */}
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Contacto</h4>
+          <ul className="text-sm space-y-2">
+            <li className="flex items-center space-x-2">
+              <Phone size={16} />
+              <span>+51 65507534</span>
+            </li>
+            <li className="flex items-center space-x-2">
+              <Mail size={16} />
+              <span>contacto.microsystems@gmail.com</span>
+            </li>
+            <li className="flex items-center space-x-2">
+              <Link href="https://www.facebook.com/postgradounap/">
+                <Facebook
+                  size={16}
+                  className="hover:text-gray-300"
+                />
+              </Link>
+              <Link href="https://www.linkedin.com/company/posgradounap">
+                <Linkedin
+                  size={16}
+                  className="hover:text-gray-300"
+                />
+              </Link>
+              <Link href="https://twitter.com/postgradounap">
+                <X
+                  size={16}
+                  className="hover:text-gray-300"
+                />
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Sección de certificación */}
+        <div>
+          <Image
+            src="/brands/isologo_ims_white.png"
+            alt="SUNEDU"
+            width={200}
+            height={200}
+          />
+        </div>
+      </div>
+      {/* Términos y condiciones */}
+      <div className="border-t border-gray-200 mt-6 pt-4 text-center text-sm text-gray-300">
+        <p>
+          &copy; {new Date().getFullYear()} INSTITUTO MYCROSYSTEM. Todos los
+          derechos reservados. - IMS
+        </p>
+        <Link
+          // href={ADMISSION_URLS_APP.HOME.TERMS_AND_CONDITIONS}
+          href={'#'}
+          className="hover:text-gray-100"
+        >
+          Términos y Condiciones
+        </Link>
       </div>
     </footer>
   )

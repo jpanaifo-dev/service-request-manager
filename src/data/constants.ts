@@ -13,6 +13,10 @@ export const APP_URL = {
     UNAUTHORIZED: '/unauthorized',
     BASE: '/',
   },
+  PORTAL: {
+    START_PROCEDURE: '/portal/iniciar-tramite',
+    SUCCESS_CONFIRMATION: '/portal/confirmacion-exito',
+  },
   AUTH: {
     LOGIN: '/login',
     REGISTER: '/register',
