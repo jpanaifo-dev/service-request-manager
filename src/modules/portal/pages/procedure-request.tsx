@@ -524,18 +524,55 @@ export const ProcedureRequestPage = ({
                 <span>Registrar Solicitud</span>
               </CardTitle>
               <CardDescription>
-                Solicitud para: {foundPerson.names} {foundPerson.last_name1}{' '}
-                {foundPerson.last_name2}
+                Solicitud creada por: {foundPerson.names}{' '}
+                {foundPerson.last_name1} {foundPerson.last_name2}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert className="border-blue-200 bg-blue-50">
-                <AlertDescription className="text-blue-800">
-                  <strong>Persona:</strong> {foundPerson.names}{' '}
-                  {foundPerson.last_name1} {foundPerson.last_name2} -{' '}
-                  {foundPerson.document_number}
-                </AlertDescription>
-              </Alert>
+              <div className="bg-white border rounded-lg p-4 mb-4 flex flex-col gap-2 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <UserPlus className="w-4 h-4 text-blue-500" />
+                  <span className="font-medium text-gray-900 text-sm">
+                    Datos de la Persona
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">
+                  <div>
+                    <span className="block font-semibold">Nombre</span>
+                    <span>
+                      {foundPerson.names} {foundPerson.last_name1}{' '}
+                      {foundPerson.last_name2}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block font-semibold">Documento</span>
+                    <span>{foundPerson.document_number}</span>
+                  </div>
+                  <div>
+                    <span className="block font-semibold">Email</span>
+                    <span>
+                      {foundPerson.email
+                        ? `${foundPerson.email.slice(
+                            0,
+                            3
+                          )}...${foundPerson.email.slice(
+                            foundPerson.email.indexOf('@')
+                          )}`
+                        : ''}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block font-semibold">Teléfono</span>
+                    <span>
+                      {foundPerson.cellphone
+                        ? `${foundPerson.cellphone[0]}${'*'.repeat(
+                            foundPerson.cellphone.length - 4
+                          )}${foundPerson.cellphone.slice(-3)}`
+                        : ''}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               <div>
                 <Label htmlFor="procedure-type">Tipo de Trámite *</Label>
