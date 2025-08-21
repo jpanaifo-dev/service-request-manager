@@ -84,6 +84,10 @@ export const ProcedureRequestPage = ({
     document_type: '',
   })
 
+  const [codeCreatedProcedure, setCodeCreatedProcedure] = useState<
+    string | null
+  >(null)
+
   const [procedureForm, setProcedureForm] = useState<Procedure>({
     description: '',
     is_active: false,
@@ -204,6 +208,9 @@ export const ProcedureRequestPage = ({
         setError('Error al registrar la solicitud. Inténtalo de nuevo.')
         setLoading(false)
         return
+      }
+      if (response.data?.code) {
+        setCodeCreatedProcedure(response?.data?.code || null)
       }
       setStep('success')
       setLoading(false)
@@ -930,6 +937,7 @@ export const ProcedureRequestPage = ({
         {/* Step 5: Success */}
         {step === 'success' && (
           <SuccessConfirmation
+            codeProcedure={codeCreatedProcedure}
             foundPerson={foundPerson}
             handleReset={handleReset}
             procedureForm={procedureForm}

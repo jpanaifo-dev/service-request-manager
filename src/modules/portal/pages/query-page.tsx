@@ -29,6 +29,7 @@ import {
   Info,
   HelpCircle,
 } from 'lucide-react'
+import { fetchProceduresList } from '@/api/app'
 
 export const QueryPage = () => {
   const searchParams = useSearchParams()

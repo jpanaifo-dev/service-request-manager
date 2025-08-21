@@ -8,8 +8,18 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, FileText, User, Clock, Sparkles } from 'lucide-react'
-import { Person, ProcedureType } from '@/types'
+import {
+  CheckCircle,
+  FileText,
+  User,
+  Clock,
+  Sparkles,
+  Copy,
+  Download,
+  Mail,
+  Code,
+} from 'lucide-react'
+import type { Person, ProcedureType } from '@/types'
 
 interface Procedure {
   id?: number
@@ -24,6 +34,7 @@ interface SuccessConfirmationProps {
   foundPerson: Person | null
   procedureTypes: ProcedureType[]
   procedureForm: Procedure
+  codeProcedure?: string | null
   handleReset: () => void
 }
 
@@ -32,7 +43,39 @@ export function SuccessConfirmation({
   procedureTypes,
   procedureForm,
   handleReset,
+  codeProcedure = null,
 }: SuccessConfirmationProps) {
+  const handleCopyCode = () => {
+    if (codeProcedure) {
+      navigator.clipboard.writeText(codeProcedure)
+      // You could add a toast notification here
+    }
+  }
+
+  const handleDownloadCode = () => {
+    if (codeProcedure) {
+      const blob = new Blob([codeProcedure], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `codigo-solicitud-${Date.now()}.txt`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  const handleEmailCode = () => {
+    if (codeProcedure) {
+      const subject = encodeURIComponent('Código de Solicitud de Procedimiento')
+      const body = encodeURIComponent(
+        `Hola,\n\nAquí está tu código de solicitud:\n\n${codeProcedure}\n\nUtiliza este código para realizar tu consulta.\n\nSaludos.`
+      )
+      window.open(`mailto:?subject=${subject}&body=${body}`)
+    }
+  }
+
   return (
     <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-emerald-50 via-white to-teal-50">
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-100/50 to-transparent rounded-full -translate-y-16 translate-x-16" />
@@ -119,6 +162,66 @@ export function SuccessConfirmation({
             </div>
           </div>
         </div>
+
+        {codeProcedure && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="bg-blue-500 p-2 rounded-lg">
+                <Code className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-blue-900 text-lg">
+                  Código de tu Solicitud
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Utiliza este código para realizar tu consulta
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white border-2 border-dashed border-blue-300 rounded-lg p-4 mb-4">
+              <code className="text-lg font-mono font-bold text-blue-800 break-all">
+                {codeProcedure}
+              </code>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Button
+                onClick={handleCopyCode}
+                variant="outline"
+                className="border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400 bg-transparent"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copiar Código
+              </Button>
+
+              <Button
+                onClick={handleDownloadCode}
+                variant="outline"
+                className="border-green-300 text-green-700 hover:bg-green-50 hover:border-green-400 bg-transparent"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Descargar
+              </Button>
+
+              <Button
+                onClick={handleEmailCode}
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 bg-transparent"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Enviar por Email
+              </Button>
+            </div>
+
+            <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+              <p className="text-sm text-blue-800 font-medium">
+                💡 <strong>Importante:</strong> Guarda este código en un lugar
+                seguro. Lo necesitarás para hacer seguimiento a tu solicitud.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="pt-2">
           <Button
