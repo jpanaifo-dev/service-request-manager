@@ -4,75 +4,104 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  buscarSolicitudesPorUsuario,
-  obtenerColorEstado,
-  type Solicitud,
-} from '@/lib/data'
+import { obtenerColorEstado } from '@/lib/data'
 import {
   Search,
   FileText,
   Calendar,
-  Eye,
   AlertCircle,
-  Info,
-  HelpCircle,
+  Copy,
+  CheckCircle,
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  MapPin,
 } from 'lucide-react'
-import { fetchProceduresList } from '@/api/app'
+import { fetchProceduresList, fetchProcedureTrackingList } from '@/api/app'
+import { ProcedureData, ProcedureTrackingDetail } from '@/types'
 
 export const QueryPage = () => {
   const searchParams = useSearchParams()
-  const [documento, setDocumento] = useState('')
-  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([])
+  const [codigo, setCodigo] = useState('')
+  const [solicitud, setSolicitud] = useState<ProcedureData | null>(null)
+  const [tracking, setTracking] = useState<ProcedureTrackingDetail[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingTracking, setLoadingTracking] = useState(false)
   const [error, setError] = useState('')
-  const [solicitudSeleccionada, setSolicitudSeleccionada] =
-    useState<Solicitud | null>(null)
+  const [errorTracking, setErrorTracking] = useState('')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    const docParam = searchParams.get('documento')
-    if (docParam) {
-      setDocumento(docParam)
-      buscarSolicitudes(docParam)
+    const codigoParam = searchParams.get('codigo')
+    if (codigoParam) {
+      setCodigo(codigoParam)
+      buscarSolicitud(codigoParam)
     }
   }, [])
 
-  const buscarSolicitudes = async (doc?: string) => {
-    const documentoBuscar = doc || documento
-    if (!documentoBuscar) {
-      setError('Por favor ingresa un número de documento')
+  const buscarSolicitud = async (cod?: string) => {
+    const codigoBuscar = cod || codigo
+    if (!codigoBuscar) {
+      setError('Por favor ingresa un código de procedimiento')
       return
     }
 
     setLoading(true)
     setError('')
+    setSolicitud(null)
+    setTracking([])
 
-    // Simular delay de búsqueda
-    setTimeout(() => {
-      const solicitudesEncontradas =
-        buscarSolicitudesPorUsuario(documentoBuscar)
+    try {
+      const response = await fetchProceduresList({
+        code: codigoBuscar,
+      })
 
-      if (solicitudesEncontradas.length === 0) {
-        setError('No se encontraron solicitudes para este documento')
-        setSolicitudes([])
+      if (response && response.data && response.data.results.length > 0) {
+        setSolicitud(response.data.results[0])
+        await obtenerTracking(response.data.results[0].id)
       } else {
-        setSolicitudes(solicitudesEncontradas)
-        setError('')
+        setError('No se encontró ninguna solicitud con este código')
       }
-
+    } catch {
+      setError('Error al buscar la solicitud. Intenta nuevamente.')
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
+  }
+
+  const obtenerTracking = async (solicitudId: number) => {
+    setLoadingTracking(true)
+    setErrorTracking('')
+
+    try {
+      const response = await fetchProcedureTrackingList({
+        procedure_id: solicitudId,
+      })
+
+      if (response && response.data && response.data.results.length > 0) {
+        setTracking(response.data.results)
+      } else {
+        setErrorTracking(
+          'No se encontró información de tracking para esta solicitud'
+        )
+      }
+    } catch {
+      setErrorTracking('Error al obtener el tracking. Intenta nuevamente.')
+    } finally {
+      setLoadingTracking(false)
+    }
+  }
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const formatearFecha = (fecha: string) => {
@@ -83,145 +112,75 @@ export const QueryPage = () => {
     })
   }
 
-  const obtenerDescripcionEstado = (estado: Solicitud['estado']) => {
-    switch (estado) {
-      case 'pendiente':
-        return 'Tu solicitud ha sido recibida y está en cola para revisión'
-      case 'en-revision':
-        return 'Un especialista está revisando tu solicitud y documentos'
-      case 'aprobada':
-        return 'Tu solicitud ha sido aprobada y está en proceso de finalización'
-      case 'rechazada':
-        return 'Tu solicitud ha sido rechazada. Revisa las observaciones'
-      case 'completada':
-        return 'Tu solicitud ha sido completada exitosamente'
-      default:
-        return 'Estado desconocido'
-    }
+  const formatearFechaHora = (fecha: string) => {
+    return new Date(fecha).toLocaleString('es-CO', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Consultar Estado de Solicitudes
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-4xl mx-auto py-12 px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-3">
+            Consultar Solicitud
           </h1>
-          <p className="text-gray-600">
-            Ingresa tu número de documento para ver el estado de tus solicitudes
+          <p className="text-gray-600 text-sm">
+            Ingresa tu código de procedimiento para consultar el estado
           </p>
         </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-blue-800">
-              <Info className="w-5 h-5" />
-              <span>Instrucciones de Consulta</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-blue-700">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-semibold mb-2">¿Cómo consultar?</h4>
-                <ul className="text-sm space-y-1">
-                  <li>• Ingresa tu número de documento de identidad</li>
-                  <li>• Haz clic en {'"Buscar"'} para ver tus solicitudes</li>
-                  <li>
-                    • Selecciona una solicitud para ver detalles completos
-                  </li>
-                  <li>• Revisa el seguimiento y estado actual</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Estados de Solicitud</h4>
-                <div className="text-sm space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                      Pendiente
-                    </Badge>
-                    <span>En cola para revisión</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-blue-100 text-blue-800 text-xs">
-                      En Revisión
-                    </Badge>
-                    <span>Siendo evaluada</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-green-100 text-green-800 text-xs">
-                      Aprobada
-                    </Badge>
-                    <span>Lista para finalizar</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-purple-100 text-purple-800 text-xs">
-                      Completada
-                    </Badge>
-                    <span>Proceso terminado</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Formulario de Búsqueda */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Search className="w-5 h-5" />
-              <span>Buscar Solicitudes</span>
-            </CardTitle>
-            <CardDescription>
-              Consulta todas tus solicitudes activas e historial
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 flex flex-col gap-2 md:gap-4">
-                <Label htmlFor="documento">Número de Documento</Label>
+        <Card className="mb-8 border-gray-100 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="max-w-md mx-auto">
+              <Label
+                htmlFor="codigo"
+                className="text-sm font-medium text-gray-700"
+              >
+                Código de Procedimiento
+              </Label>
+              <div className="mt-2 flex gap-3">
                 <Input
-                  id="documento"
-                  value={documento.trim()}
-                  onChange={(e) => setDocumento(e.target.value.trim())}
-                  placeholder="Ej: 12345678"
-                  className="mt-1"
+                  id="codigo"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                  placeholder="Ej: PROC-2024-001"
+                  className="flex-1"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      buscarSolicitud()
+                    }
+                  }}
                 />
                 <Button
-                  onClick={() => buscarSolicitudes()}
+                  onClick={() => buscarSolicitud()}
                   disabled={loading}
-                  className="w-full sm:w-auto"
+                  className="px-6"
                 >
                   {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Buscando...
-                    </>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <>
-                      <Search className="w-4 h-4 mr-2" />
-                      Buscar
-                    </>
+                    <Search className="w-4 h-4" />
                   )}
                 </Button>
-                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 font-medium mb-1">
-                    📋 Documentos de prueba disponibles:
-                  </p>
-                  <div className="text-sm text-gray-500 space-y-1">
-                    <p>
-                      <strong>12345678</strong> - Juan Pérez (3 solicitudes
-                      activas)
-                    </p>
-                    <p>
-                      <strong>87654321</strong> - María García (2 solicitudes
-                      completadas)
-                    </p>
-                    <p>
-                      <strong>11223344</strong> - Carlos López (1 solicitud en
-                      revisión)
-                    </p>
-                  </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-500 mb-2">Códigos de prueba:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['PROC-001', 'PROC-002', 'PROC-003'].map((testCode) => (
+                    <button
+                      key={testCode}
+                      onClick={() => setCodigo(testCode)}
+                      className="text-xs px-2 py-1 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+                    >
+                      {testCode}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -229,283 +188,229 @@ export const QueryPage = () => {
         </Card>
 
         {error && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
+          <Alert
+            variant="destructive"
+            className="mb-6 max-w-md mx-auto"
+          >
             <AlertCircle className="w-4 h-4" />
-            <AlertDescription className="text-red-800">
-              {error}
-            </AlertDescription>
+            <AlertDescription className="text-sm">{error}</AlertDescription>
           </Alert>
         )}
 
-        {/* Lista de Solicitudes */}
-        {solicitudes.length > 0 && (
-          <div className="grid lg:grid-cols-2 gap-6">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Mis Solicitudes ({solicitudes.length})
-                </h2>
-                <div className="flex items-center space-x-1 text-sm text-gray-500">
-                  <HelpCircle className="w-4 h-4" />
-                  <span>Haz clic para ver detalles</span>
+        {solicitud && (
+          <div className="max-w-2xl mx-auto">
+            <Card className="border-gray-100 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-1">
+                      {solicitud.procedure_type?.name || 'Tipo no especificado'}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <FileText className="w-3 h-3" />
+                        {solicitud.code}
+                      </span>
+                      <button
+                        onClick={() => copyToClipboard(solicitud.code)}
+                        className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                      >
+                        {copied ? (
+                          <CheckCircle className="w-3 h-3 text-green-500" />
+                        ) : (
+                          <Copy className="w-3 h-3" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <Badge className={obtenerColorEstado('pendiente')}>
+                    {solicitud.is_active ? 'Activo' : 'Inactivo'}
+                  </Badge>
                 </div>
-              </div>
-              <div className="space-y-4">
-                {solicitudes.map((solicitud) => (
-                  <Card
-                    key={solicitud.id}
-                    className={`cursor-pointer transition-all hover:shadow-md ${
-                      solicitudSeleccionada?.id === solicitud.id
-                        ? 'ring-2 ring-blue-500'
-                        : ''
-                    }`}
-                    onClick={() => setSolicitudSeleccionada(solicitud)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">
-                            {solicitud.tipo}
-                          </CardTitle>
-                          <CardDescription className="flex items-center space-x-2 mt-1">
-                            <span>ID: {solicitud.id}</span>
-                            <span>•</span>
-                            <span className="flex items-center">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatearFecha(solicitud.fechaCreacion)}
-                            </span>
-                          </CardDescription>
-                        </div>
-                        <Badge className={obtenerColorEstado(solicitud.estado)}>
-                          {solicitud.estado.charAt(0).toUpperCase() +
-                            solicitud.estado.slice(1)}
-                        </Badge>
+
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  {solicitud.description || 'Sin descripción'}
+                </p>
+
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {formatearFecha(solicitud.created_at)}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6 border-gray-100">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">
+                  Detalles de la Solicitud
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Código:</span>
+                    <p className="font-mono">{solicitud.code}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Estado:</span>
+                    <div className="mt-1">
+                      <Badge className={obtenerColorEstado('pendiente')}>
+                        {solicitud.is_active ? 'Activo' : 'Inactivo'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Tipo:</span>
+                    <p className="mt-1">
+                      {solicitud.procedure_type?.name || 'No especificado'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Creado:</span>
+                    <p className="mt-1">
+                      {formatearFecha(solicitud.created_at)}
+                    </p>
+                  </div>
+                </div>
+
+                {solicitud.description && (
+                  <div>
+                    <span className="text-gray-500 text-sm">Descripción:</span>
+                    <p className="text-sm mt-1">{solicitud.description}</p>
+                  </div>
+                )}
+
+                {solicitud.person && (
+                  <div className="pt-4 border-t">
+                    <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Información del solicitante
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-500">Nombre:</span>
+                        <p className="mt-1">
+                          {solicitud.person.names} {solicitud.person.last_name1}{' '}
+                          {solicitud.person.last_name2}
+                        </p>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {solicitud.descripcion}
-                      </p>
-                      <div className="flex items-center justify-between mt-3">
-                        <span className="text-xs text-gray-500">
-                          Actualizado:{' '}
-                          {formatearFecha(solicitud.fechaActualizacion)}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                      <div>
+                        <span className="text-gray-500">Documento:</span>
+                        <p className="mt-1">
+                          {solicitud.person.document_number ||
+                            'No especificado'}
+                        </p>
+                      </div>
+                      {solicitud.person.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          <span>{solicitud.person.email}</span>
+                        </div>
+                      )}
+                      {solicitud.person.cellphone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          <span>{solicitud.person.cellphone}</span>
+                        </div>
+                      )}
+                      {solicitud.person.address && (
+                        <div className="flex items-center gap-2 md:col-span-2">
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm">
+                            {solicitud.person.address}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-4 border-t">
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    Historial de Tracking
+                  </h4>
+
+                  {loadingTracking ? (
+                    <div className="flex justify-center py-4">
+                      <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                    </div>
+                  ) : errorTracking ? (
+                    <Alert variant="destructive">
+                      <AlertCircle className="w-4 h-4" />
+                      <AlertDescription className="text-sm">
+                        {errorTracking}
+                      </AlertDescription>
+                    </Alert>
+                  ) : tracking.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No hay información de tracking disponible
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {tracking.map((track, index) => (
+                        <div
+                          key={track.id}
+                          className="flex gap-4"
                         >
-                          <Eye className="w-3 h-3 mr-1" />
-                          Ver detalles
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Detalles de Solicitud Seleccionada */}
-            <div>
-              {solicitudSeleccionada ? (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <FileText className="w-5 h-5" />
-                      <span>Detalles de la Solicitud</span>
-                    </CardTitle>
-                    <CardDescription>
-                      Información completa y seguimiento
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          ID de Solicitud
-                        </Label>
-                        <p className="font-mono text-sm">
-                          {solicitudSeleccionada.id}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Estado Actual
-                        </Label>
-                        <div className="mt-1">
-                          <Badge
-                            className={obtenerColorEstado(
-                              solicitudSeleccionada.estado
+                          <div className="flex flex-col items-center">
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                index === 0 ? 'bg-blue-500' : 'bg-gray-300'
+                              }`}
+                            />
+                            {index < tracking.length - 1 && (
+                              <div className="w-0.5 h-12 bg-gray-300 mt-1" />
                             )}
-                          >
-                            {solicitudSeleccionada.estado
-                              .charAt(0)
-                              .toUpperCase() +
-                              solicitudSeleccionada.estado.slice(1)}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Tipo de Solicitud
-                      </Label>
-                      <p className="mt-1">{solicitudSeleccionada.tipo}</p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Descripción
-                      </Label>
-                      <p className="mt-1 text-sm">
-                        {solicitudSeleccionada.descripcion}
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Estado Actual
-                      </Label>
-                      <p className="mt-1 text-sm text-gray-600">
-                        {obtenerDescripcionEstado(solicitudSeleccionada.estado)}
-                      </p>
-                    </div>
-
-                    {solicitudSeleccionada.archivos.length > 0 && (
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Documentos Adjuntos
-                        </Label>
-                        <div className="mt-1 space-y-1">
-                          {solicitudSeleccionada.archivos.map(
-                            (archivo, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center space-x-2 text-sm"
-                              >
-                                <FileText className="w-4 h-4 text-gray-400" />
-                                <span>{archivo}</span>
+                          </div>
+                          <div className="flex-1 pb-4">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-sm">
+                                  {track.status?.name ||
+                                    'Estado no especificado'}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {track.created_at
+                                    ? formatearFechaHora(track.created_at)
+                                    : 'Fecha no disponible'}
+                                </p>
                               </div>
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {solicitudSeleccionada.observaciones && (
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Observaciones
-                        </Label>
-                        <Alert className="mt-1">
-                          <AlertDescription className="text-sm">
-                            {solicitudSeleccionada.observaciones}
-                          </AlertDescription>
-                        </Alert>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Fecha de Creación
-                        </Label>
-                        <p className="text-sm">
-                          {formatearFecha(solicitudSeleccionada.fechaCreacion)}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-500">
-                          Última Actualización
-                        </Label>
-                        <p className="text-sm">
-                          {formatearFecha(
-                            solicitudSeleccionada.fechaActualizacion
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Timeline de Estados */}
-                    <div className="pt-4 border-t">
-                      <Label className="text-sm font-medium text-gray-500 mb-3 block">
-                        Seguimiento
-                      </Label>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium">
-                              Solicitud Creada
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {formatearFecha(
-                                solicitudSeleccionada.fechaCreacion
+                              {track.status?.color && (
+                                <Badge
+                                  className="text-xs"
+                                  style={{
+                                    backgroundColor: track.status.color,
+                                  }}
+                                >
+                                  {track.status.name}
+                                </Badge>
                               )}
-                            </p>
+                            </div>
+
+                            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
+                              {track.from_office && (
+                                <div>
+                                  <span className="font-medium">Desde:</span>{' '}
+                                  {track.from_office.name}
+                                </div>
+                              )}
+                              {track.to_office && (
+                                <div>
+                                  <span className="font-medium">Hacia:</span>{' '}
+                                  {track.to_office.name}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-
-                        {solicitudSeleccionada.estado !== 'pendiente' && (
-                          <div className="flex items-center space-x-3">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium">En Revisión</p>
-                              <p className="text-xs text-gray-500">
-                                Procesando documentos
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
-                        {['aprobada', 'completada'].includes(
-                          solicitudSeleccionada.estado
-                        ) && (
-                          <div className="flex items-center space-x-3">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium">Aprobada</p>
-                              <p className="text-xs text-gray-500">
-                                Solicitud aprobada
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
-                        {solicitudSeleccionada.estado === 'completada' && (
-                          <div className="flex items-center space-x-3">
-                            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium">Completada</p>
-                              <p className="text-xs text-gray-500">
-                                {formatearFecha(
-                                  solicitudSeleccionada.fechaActualizacion
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      ))}
                     </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Card>
-                  <CardContent className="flex items-center justify-center py-12">
-                    <div className="text-center">
-                      <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 mb-2">
-                        Selecciona una solicitud para ver los detalles
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        Haz clic en cualquier solicitud de la lista
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

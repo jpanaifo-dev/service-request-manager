@@ -179,8 +179,8 @@ export function SuccessConfirmation({
               </div>
             </div>
 
-            <div className="bg-white border-2 border-dashed border-blue-300 rounded-lg p-4 mb-4">
-              <code className="text-lg font-mono font-bold text-blue-800 break-all">
+            <div className="bg-white border-2 border-dashed border-blue-300 rounded-lg p-4 mb-4 flex items-center justify-center">
+              <code className="text-xl md:text-2xl font-mono font-bold text-blue-800 break-all">
                 {codeProcedure}
               </code>
             </div>
