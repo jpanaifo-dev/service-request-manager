@@ -8,8 +8,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-// import { StatsWidget } from '@/components/stats-widget'
-// import { NotificationSystem } from '@/components/notification-system'
 import {
   FileText,
   Search,
@@ -19,10 +17,8 @@ import {
   CheckCircle,
   Award,
   Lock,
-  Globe,
   Star,
   TrendingUp,
-  Building,
 } from 'lucide-react'
 import { LOGOS } from '@/assets/brands'
 import { APP_URL } from '@/data/constants'
@@ -94,91 +90,9 @@ export const HomePage = () => {
                 </div>
               </div>
             </div>
-
-            <div className="lg:text-right">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <h3 className="text-2xl font-bold text-white mb-6">
-                  Estadísticas en Tiempo Real
-                </h3>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-300 mb-2">
-                      15,847
-                    </div>
-                    <div className="text-sm text-blue-100">
-                      Solicitudes Procesadas
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-300 mb-2">
-                      98.5%
-                    </div>
-                    <div className="text-sm text-blue-100">
-                      Satisfacción Ciudadana
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-yellow-300 mb-2">
-                      2.3 días
-                    </div>
-                    <div className="text-sm text-blue-100">Tiempo Promedio</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-purple-300 mb-2">
-                      24/7
-                    </div>
-                    <div className="text-sm text-blue-100">Disponibilidad</div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
-
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-lg font-semibold text-slate-600 mb-2">
-              Certificado y Respaldado Por
-            </h2>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            <div className="flex items-center space-x-2">
-              <Shield className="w-6 h-6 text-slate-500" />
-              <span className="font-semibold text-slate-700">MinTIC</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Award className="w-6 h-6 text-slate-500" />
-              <span className="font-semibold text-slate-700">ISO 27001</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Globe className="w-6 h-6 text-slate-500" />
-              <span className="font-semibold text-slate-700">Gov.co</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Lock className="w-6 h-6 text-slate-500" />
-              <span className="font-semibold text-slate-700">HTTPS Seguro</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Stats Section */}
-      {/* <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              Transparencia y Resultados
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Datos actualizados en tiempo real sobre el desempeño de nuestros
-              servicios
-            </p>
-          </div>
-          <StatsWidget />
-        </div>
-      </section> */}
 
       {/* Process Section - More Professional */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-50">
