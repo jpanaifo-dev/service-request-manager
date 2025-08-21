@@ -26,6 +26,8 @@ import Link from 'next/link'
 import type { ProcedureData } from '@/types'
 import type { ProcedureTrackingDetail } from '@/types/procedureTracking'
 import { APP_URL } from '@/data/constants'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 interface PageProps {
   procedureDetails: ProcedureData | undefined
@@ -150,12 +152,15 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                       {procedureDetails.code}
                     </p>
                   </div>
-                  <div>
+                  <div className="col-span-2">
                     <p className="text-sm font-medium text-gray-500">
-                      Tipo de Procedimiento
+                      Tipo de trámite
                     </p>
                     <p className="text-lg">
                       {procedureDetails.procedure_type.name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {procedureDetails.procedure_type.description}
                     </p>
                   </div>
                   <div>
@@ -163,9 +168,11 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                       Fecha de Creación
                     </p>
                     <p className="text-lg">
-                      {new Date(
-                        procedureDetails.created_at
-                      ).toLocaleDateString()}
+                      {format(
+                        new Date(procedureDetails.created_at),
+                        'dd/MM/yyyy HH:mm',
+                        { locale: es }
+                      )}
                     </p>
                   </div>
                   <div>
@@ -173,9 +180,13 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                       Última Actualización
                     </p>
                     <p className="text-lg">
-                      {new Date(
-                        procedureDetails.updated_at
-                      ).toLocaleDateString()}
+                      {procedureDetails.updated_at
+                        ? format(
+                            new Date(procedureDetails.updated_at),
+                            'dd/MM/yyyy HH:mm',
+                            { locale: es }
+                          )
+                        : 'No disponible'}
                     </p>
                   </div>
                 </div>
@@ -186,20 +197,9 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                   <p className="text-sm font-medium text-gray-500 mb-2">
                     Descripción
                   </p>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-gray-700">
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 border-dashed">
+                    <p className="text-gray-700 italic">
                       {procedureDetails.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-2">
-                    Descripción del Tipo
-                  </p>
-                  <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-                    <p className="text-gray-700">
-                      {procedureDetails.procedure_type.description}
                     </p>
                   </div>
                 </div>
@@ -229,71 +229,110 @@ export const ProcedureDetailsPage = (props: PageProps) => {
 
             {/* Tracking e Historial */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Clock className="w-5 h-5" />
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center space-x-2 text-base font-semibold">
+                  <Clock className="w-5 h-5 text-gray-600" />
                   <span>Historial y Tracking</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm text-gray-600">
                   Seguimiento completo de todos los cambios y acciones
                   realizadas
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {procedureTracking && procedureTracking?.length > 0 ? (
-                    procedureTracking?.map((tracking, index) => (
-                      <div
-                        key={tracking.id}
-                        className="flex space-x-4"
-                      >
-                        <div className="flex flex-col items-center">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
-                            {getTrackingIcon(tracking.status.name)}
+                    procedureTracking?.map((tracking, index) => {
+                      const isCurrent = tracking.is_current
+                      return (
+                        <div
+                          key={tracking.id}
+                          className={`flex space-x-4 p-3 rounded-lg border ${
+                            isCurrent
+                              ? 'bg-green-50 border-green-200'
+                              : 'bg-white border-gray-200'
+                          }`}
+                        >
+                          <div className="flex flex-col items-center">
+                            <div
+                              className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                                isCurrent ? 'bg-green-100' : 'bg-gray-100'
+                              }`}
+                            >
+                              {getTrackingIcon(tracking.status.name)}
+                            </div>
+                            {index < procedureTracking.length - 1 && (
+                              <div
+                                className={`w-px h-12 mt-2 ${
+                                  isCurrent ? 'bg-blue-200' : 'bg-gray-200'
+                                }`}
+                              ></div>
+                            )}
                           </div>
-                          {index < procedureTracking.length - 1 && (
-                            <div className="w-px h-12 bg-gray-200 mt-2"></div>
-                          )}
+
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-2">
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs font-medium ${
+                                    isCurrent
+                                      ? 'bg-blue-100 text-blue-800 border-blue-200'
+                                      : 'bg-gray-100 text-gray-700 border-gray-200'
+                                  }`}
+                                >
+                                  {tracking.status.name}
+                                </Badge>
+                                {isCurrent && (
+                                  <span className="text-xs text-blue-600 font-medium">
+                                    Actual
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                {format(
+                                  new Date(tracking.created_at),
+                                  'dd/MM/yyyy HH:mm',
+                                  { locale: es }
+                                )}
+                              </span>
+                            </div>
+
+                            <div className="space-y-1 text-sm">
+                              <div className="flex items-center space-x-1 text-gray-700">
+                                <span className="text-gray-500">•</span>
+                                <span className="font-medium">De:</span>
+                                <span>
+                                  {tracking?.from_office?.name || 'Externo'}
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-1 text-gray-700">
+                                <span className="text-gray-500">•</span>
+                                <span className="font-medium">Para:</span>
+                                <span>{tracking?.to_office?.name}</span>
+                              </div>
+                              {tracking.observations && (
+                                <div className="mt-2 p-2 bg-gray-50 rounded-md border border-gray-200">
+                                  <p className="text-xs text-gray-600">
+                                    <span className="font-medium">
+                                      Observaciones:
+                                    </span>{' '}
+                                    {tracking.observations}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex-1 pb-4">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-gray-900">
-                              {tracking.status.name}
-                            </h4>
-                            <span className="text-sm text-gray-500">
-                              {new Date(
-                                tracking.created_at
-                              ).toLocaleDateString()}{' '}
-                              -{' '}
-                              {new Date(
-                                tracking.created_at
-                              ).toLocaleTimeString()}
-                            </span>
-                          </div>
-                          <div className="mt-1 text-sm text-gray-600">
-                            <p>
-                              <strong>De:</strong> {tracking?.from_office?.name}
-                            </p>
-                            <p>
-                              <strong>Para:</strong> {tracking?.to_office?.name}
-                            </p>
-                            <p>
-                              <strong>Estado:</strong>{' '}
-                              {tracking.status.description}
-                            </p>
-                            {/* {tracking.description && (
-                              <p className="mt-2 p-2 bg-gray-50 rounded text-xs">
-                                {tracking.description}
-                              </p>
-                            )} */}
-                          </div>
-                        </div>
-                      </div>
-                    ))
+                      )
+                    })
                   ) : (
-                    <p className="text-gray-500 text-center py-4">
-                      No hay historial de tracking disponible
-                    </p>
+                    <div className="text-center py-6 text-gray-500">
+                      <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">
+                        No hay historial de tracking disponible
+                      </p>
+                    </div>
                   )}
                 </div>
               </CardContent>
