@@ -123,7 +123,7 @@ export function SuccessConfirmation({
         <div className="pt-2">
           <Button
             onClick={handleReset}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="w-full"
           >
             <FileText className="w-4 h-4 mr-2" />
             Crear Nueva Solicitud

@@ -918,7 +918,7 @@ export const ProcedureRequestPage = ({
                 <Button
                   onClick={handleConfirmProcedure}
                   disabled={loading}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="flex-1 "
                 >
                   {loading ? 'Registrando...' : 'Confirmar y Registrar'}
                 </Button>
