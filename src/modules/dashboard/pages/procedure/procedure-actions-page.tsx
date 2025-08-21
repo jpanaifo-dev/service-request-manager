@@ -61,6 +61,39 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { TrackingFormData, trackingSchema } from '@/schemas/procedureTracking'
 import { createProcedureTracking } from '@/api/app'
 
+// Constantes para textos en español
+const TEXTS = {
+  LOADING: 'Cargando información del trámite...',
+  BACK_TO_DETAILS: 'Volver a Detalles',
+  MANAGE_PROCEDURE: 'Gestionar Trámite',
+  PROCEDURE_INFO: 'Información del Trámite',
+  APPLICANT: 'Solicitante',
+  PROCEDURE_TYPE: 'Tipo de Trámite',
+  CREATION_DATE: 'Fecha de Creación',
+  CURRENT_OFFICE: 'Oficina Actual',
+  DESCRIPTION: 'Descripción',
+  ACTION_TO_PERFORM: 'Acción a Realizar',
+  ACTION_DESCRIPTION:
+    'Selecciona y completa la acción que deseas realizar sobre este trámite',
+  TO_OFFICE: 'A Oficina',
+  SELECT_OFFICE: 'Selecciona una oficina',
+  STATUS: 'Estado',
+  SELECT_STATUS: 'Selecciona un estado',
+  OBSERVATIONS: 'Observaciones',
+  OBSERVATIONS_PLACEHOLDER: 'Agrega tus observaciones aquí...',
+  CANCEL: 'Cancelar',
+  SAVE_ACTION: 'Guardar Acción',
+  PROCESSING: 'Procesando...',
+  PROCEDURE_HISTORY: 'Historial del Trámite',
+  HISTORY_DESCRIPTION: 'Seguimiento de todos los movimientos realizados',
+  NO_HISTORY: 'No hay historial disponible para este trámite',
+  CONFIRM_ACTION: 'Confirmar Acción',
+  CONFIRM_DESCRIPTION:
+    '¿Estás seguro de que deseas realizar esta acción? Esto actualizará el estado del trámite y el historial de seguimiento.',
+  SUCCESS_MESSAGE: 'Acción completada exitosamente',
+  ERROR_MESSAGE: 'Error al ejecutar la acción',
+} as const
+
 interface PageProps {
   procedureDetails: ProcedureData | undefined
   procedureTracking?: ProcedureTrackingDetail[] | null
@@ -100,7 +133,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading procedure information...</p>
+          <p className="mt-4 text-gray-600">{TEXTS.LOADING}</p>
         </div>
       </div>
     )
@@ -118,7 +151,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
       if (response.data) {
         setMessage({
           type: 'success',
-          text: 'Action completed successfully',
+          text: TEXTS.SUCCESS_MESSAGE,
         })
         setTimeout(() => {
           router.push(`${APP_URL.DASHBOARD.SOLICITUDES.BASE}/${procedureId}`)
@@ -127,7 +160,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
         throw new Error('Error executing action')
       }
     } catch {
-      setMessage({ type: 'error', text: 'Error executing action' })
+      setMessage({ type: 'error', text: TEXTS.ERROR_MESSAGE })
     } finally {
       setIsLoading(false)
       setShowConfirmation(false)
@@ -163,11 +196,13 @@ export const ProcedureActionsPage = (props: PageProps) => {
                   className="text-white hover:bg-blue-700"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Details
+                  {TEXTS.BACK_TO_DETAILS}
                 </Button>
               </Link>
               <Edit className="w-6 h-6" />
-              <h1 className="text-xl font-semibold">Manage Procedure</h1>
+              <h1 className="text-xl font-semibold">
+                {TEXTS.MANAGE_PROCEDURE}
+              </h1>
             </div>
             <div className="flex items-center space-x-2">
               {currentStatus && (
@@ -192,7 +227,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
               <CardHeader className="bg-blue-50">
                 <CardTitle className="flex items-center space-x-2 text-blue-800 py-4">
                   <FileText className="w-5 h-5" />
-                  <span>Procedure Information</span>
+                  <span>{TEXTS.PROCEDURE_INFO}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
@@ -201,15 +236,16 @@ export const ProcedureActionsPage = (props: PageProps) => {
                     <div className="flex items-center space-x-2">
                       <User className="w-4 h-4 text-gray-500" />
                       <p className="text-sm font-medium text-gray-500">
-                        Applicant
+                        {TEXTS.APPLICANT}
                       </p>
                     </div>
                     <p className="text-lg font-semibold">
                       {procedureDetails.person.last_name1}{' '}
-                      {procedureDetails.person.last_name2}
+                      {procedureDetails.person.last_name2}{' '}
+                      {procedureDetails.person.names}{' '}
                     </p>
                     <p className="text-sm text-gray-600">
-                      ID: {procedureDetails.person.document_number}
+                      N° Doc: {procedureDetails.person.document_number}
                     </p>
                   </div>
 
@@ -217,7 +253,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                     <div className="flex items-center space-x-2">
                       <FileText className="w-4 h-4 text-gray-500" />
                       <p className="text-sm font-medium text-gray-500">
-                        Procedure Type
+                        {TEXTS.PROCEDURE_TYPE}
                       </p>
                     </div>
                     <p className="text-lg font-semibold">
@@ -232,7 +268,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
                       <p className="text-sm font-medium text-gray-500">
-                        Creation Date
+                        {TEXTS.CREATION_DATE}
                       </p>
                     </div>
                     <p className="text-lg font-semibold">
@@ -252,20 +288,20 @@ export const ProcedureActionsPage = (props: PageProps) => {
                     <div className="flex items-center space-x-2">
                       <Building className="w-4 h-4 text-gray-500" />
                       <p className="text-sm font-medium text-gray-500">
-                        Current Office
+                        {TEXTS.CURRENT_OFFICE}
                       </p>
                     </div>
                     <p className="text-lg font-semibold">
                       {procedureTracking?.find((t) => t.is_current)?.to_office
-                        ?.name || 'Not assigned'}
+                        ?.name || 'No Asignada'}
                     </p>
                   </div>
                 </div>
 
                 {procedureDetails.description && (
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-500 mb-1">
-                      Description
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm font-semibold text-gray-500 mb-1">
+                      {TEXTS.DESCRIPTION}
                     </p>
                     <p className="text-gray-700">
                       {procedureDetails.description}
@@ -278,11 +314,8 @@ export const ProcedureActionsPage = (props: PageProps) => {
             {/* Action Form */}
             <Card>
               <CardHeader>
-                <CardTitle>Action to Perform</CardTitle>
-                <CardDescription>
-                  Select and complete the action you want to perform on this
-                  procedure
-                </CardDescription>
+                <CardTitle>{TEXTS.ACTION_TO_PERFORM}</CardTitle>
+                <CardDescription>{TEXTS.ACTION_DESCRIPTION}</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Status Message */}
@@ -315,7 +348,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                         name="to_office"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>To Office</FormLabel>
+                            <FormLabel>{TEXTS.TO_OFFICE}</FormLabel>
                             <Select
                               onValueChange={(value) =>
                                 field.onChange(parseInt(value))
@@ -324,7 +357,9 @@ export const ProcedureActionsPage = (props: PageProps) => {
                             >
                               <FormControl>
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select an office" />
+                                  <SelectValue
+                                    placeholder={TEXTS.SELECT_OFFICE}
+                                  />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -349,7 +384,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                         name="status"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Status</FormLabel>
+                            <FormLabel>{TEXTS.STATUS}</FormLabel>
                             <Select
                               onValueChange={(value) =>
                                 field.onChange(parseInt(value))
@@ -358,7 +393,9 @@ export const ProcedureActionsPage = (props: PageProps) => {
                             >
                               <FormControl>
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select a status" />
+                                  <SelectValue
+                                    placeholder={TEXTS.SELECT_STATUS}
+                                  />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -383,10 +420,10 @@ export const ProcedureActionsPage = (props: PageProps) => {
                         name="observations"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Observations</FormLabel>
+                            <FormLabel>{TEXTS.OBSERVATIONS}</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="Add your observations here..."
+                                placeholder={TEXTS.OBSERVATIONS_PLACEHOLDER}
                                 className="resize-none"
                                 {...field}
                               />
@@ -404,7 +441,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                             variant="outline"
                             type="button"
                           >
-                            Cancel
+                            {TEXTS.CANCEL}
                           </Button>
                         </Link>
                         <Button
@@ -412,11 +449,11 @@ export const ProcedureActionsPage = (props: PageProps) => {
                           disabled={isLoading || !isDirty}
                         >
                           {isLoading ? (
-                            <>Processing...</>
+                            <>{TEXTS.PROCESSING}</>
                           ) : (
                             <>
                               <Save className="w-4 h-4 mr-2" />
-                              Save Action
+                              {TEXTS.SAVE_ACTION}
                             </>
                           )}
                         </Button>
@@ -434,11 +471,9 @@ export const ProcedureActionsPage = (props: PageProps) => {
               <CardHeader className="bg-gray-50">
                 <CardTitle className="flex items-center space-x-2">
                   <Clock className="w-5 h-5" />
-                  <span>Procedure History</span>
+                  <span>{TEXTS.PROCEDURE_HISTORY}</span>
                 </CardTitle>
-                <CardDescription>
-                  Tracking of all movements performed
-                </CardDescription>
+                <CardDescription>{TEXTS.HISTORY_DESCRIPTION}</CardDescription>
               </CardHeader>
               <CardContent>
                 {procedureTracking && procedureTracking.length > 0 ? (
@@ -473,10 +508,10 @@ export const ProcedureActionsPage = (props: PageProps) => {
                           </div>
                           <p className="text-sm text-gray-700 mb-1">
                             {tracking.from_office
-                              ? `From: ${tracking.from_office.name}`
-                              : 'Initial origin'}
+                              ? `De: ${tracking.from_office.name}`
+                              : 'Origen inicial'}
                             {tracking.to_office &&
-                              ` → To: ${tracking.to_office.name}`}
+                              ` → A: ${tracking.to_office.name}`}
                           </p>
                           {tracking.observations && (
                             <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded-md">
@@ -490,7 +525,7 @@ export const ProcedureActionsPage = (props: PageProps) => {
                 ) : (
                   <div className="text-center py-6 text-gray-500">
                     <Clock className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No history available for this procedure</p>
+                    <p>{TEXTS.NO_HISTORY}</p>
                   </div>
                 )}
               </CardContent>
@@ -504,49 +539,88 @@ export const ProcedureActionsPage = (props: PageProps) => {
         open={showConfirmation}
         onOpenChange={setShowConfirmation}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to perform this action? This will update the
-              procedure status and tracking history.
-            </DialogDescription>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="space-y-4">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mx-auto">
+              <CheckCircle className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="text-center space-y-2">
+              <DialogTitle className="text-lg font-semibold text-gray-900">
+                {TEXTS.CONFIRM_ACTION}
+              </DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                {TEXTS.CONFIRM_DESCRIPTION}
+              </DialogDescription>
+            </div>
           </DialogHeader>
 
           {formData && (
-            <div className="space-y-2">
+            <div className="space-y-3 p-4 bg-gray-50 rounded-lg border">
               {formData.to_office && (
-                <p>
-                  <strong>To Office:</strong>{' '}
-                  {offices.find((o) => o.id === formData.to_office)?.name}
-                </p>
+                <div className="flex items-start space-x-2">
+                  <Building className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">
+                      {TEXTS.TO_OFFICE}
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      {offices.find((o) => o.id === formData.to_office)?.name}
+                    </p>
+                  </div>
+                </div>
               )}
+
               {formData.status && (
-                <p>
-                  <strong>Status:</strong>{' '}
-                  {statuses.find((s) => s.id === formData.status)?.name}
-                </p>
+                <div className="flex items-start space-x-2">
+                  <CheckCircle className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">
+                      {TEXTS.STATUS}
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      {statuses.find((s) => s.id === formData.status)?.name}
+                    </p>
+                  </div>
+                </div>
               )}
+
               {formData.observations && (
-                <p>
-                  <strong>Observations:</strong> {formData.observations}
-                </p>
+                <div className="flex items-start space-x-2">
+                  <FileText className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-700">
+                      {TEXTS.OBSERVATIONS}
+                    </p>
+                    <p className="text-sm text-gray-900">
+                      {formData.observations}
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setShowConfirmation(false)}
+              className="w-full sm:w-auto order-2 sm:order-1"
             >
-              Cancel
+              {TEXTS.CANCEL}
             </Button>
             <Button
               onClick={handleConfirm}
               disabled={isLoading}
+              className="w-full sm:w-auto order-1 sm:order-2"
             >
-              {isLoading ? 'Processing...' : 'Confirm'}
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  {TEXTS.PROCESSING}
+                </div>
+              ) : (
+                'Confirmar'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -334,10 +334,6 @@ export const ProcedureDetailsPage = (props: PageProps) => {
                   <p className="text-sm font-medium text-gray-500">Teléfono</p>
                   <p className="text-lg">{procedureDetails.person.cellphone}</p>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Género</p>
-                  <p className="text-lg">{procedureDetails.person.gender}</p>
-                </div>
                 {procedureDetails.person.address && (
                   <div>
                     <p className="text-sm font-medium text-gray-500">
