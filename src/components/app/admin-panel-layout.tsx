@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 import { SideBar } from './side-bar'
 import { SectionElement } from '@/types'
 import { NavBarCustom } from './nav-bar-custom'
-import { Footer } from './footer'
 
 export default function AdminPanelLayout({
   children,
@@ -39,8 +38,7 @@ export default function AdminPanelLayout({
           {children}
         </main>
       </main>
-
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }
