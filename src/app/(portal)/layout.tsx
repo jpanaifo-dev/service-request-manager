@@ -17,15 +17,15 @@ export default function Layout({ children }: LayoutProps) {
         menuItems={[
           {
             label: 'Inicio',
-            href: '/',
+            href: APP_URL.HOME.BASE,
           },
           {
             label: 'Consultar trámite',
-            href: '/consultar',
+            href: APP_URL.PORTAL.CONSULTAR,
           },
           {
             label: 'Iniciar trámite',
-            href: '/iniciar-tramite',
+            href: APP_URL.PORTAL.START_PROCEDURE,
           },
         ]}
       />

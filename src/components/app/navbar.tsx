@@ -211,26 +211,20 @@ export function Navbar({
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               {/* Logo */}
-              <motion.div
-                className="flex-shrink-0"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+              <a
+                href={logo.href}
+                className="flex items-center"
               >
-                <a
-                  href={logo.href}
-                  className="flex items-center"
-                >
-                  {logo.image ? (
-                    <img
-                      src={logo.image || '/placeholder.svg'}
-                      alt="Logo"
-                      className="h-12 w-auto"
-                    />
-                  ) : (
-                    <span className="text-xl font-bold">{logo.text}</span>
-                  )}
-                </a>
-              </motion.div>
+                {logo.image ? (
+                  <img
+                    src={logo.image || '/placeholder.svg'}
+                    alt="Logo"
+                    className="h-12 w-auto"
+                  />
+                ) : (
+                  <span className="text-xl font-bold">{logo.text}</span>
+                )}
+              </a>
 
               <motion.div whileTap={{ scale: 0.95 }}>
                 <Button
