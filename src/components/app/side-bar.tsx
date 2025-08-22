@@ -5,6 +5,8 @@ import { useSidebar } from '@/hooks/use-sidebar'
 import { useStore } from '@/hooks/use-store'
 import { SectionElement } from '@/types'
 import { LogoRender } from './logo-render'
+import { APP_URL } from '@/data/constants'
+import { LOGOS } from '@/assets/brands'
 
 interface SideBarProps {
   menuItems?: SectionElement[]
@@ -30,10 +32,8 @@ export const SideBar = (props: SideBarProps) => {
         className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800 w-full"
       >
         <LogoRender
-          nameApp="TRÁMITES"
-          subtitle="Service Request Manager"
-          href={'/dashboard'}
-          className="w-full max-w-36"
+          href={APP_URL.DASHBOARD.BASE}
+          logoUrl={LOGOS.horizontal.src}
         />
         <Menu
           isOpen={getOpenState()}

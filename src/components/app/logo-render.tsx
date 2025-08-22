@@ -11,11 +11,15 @@ export const LogoRender = ({
   subtitle,
   href,
   className,
+  logoUrl = LOGOS.white.src,
+  sizeLogo,
 }: {
   nameApp?: string
   subtitle?: string
   href: string
   className?: string
+  logoUrl?: string
+  sizeLogo?: { width: number; height: number }
 }) => {
   const sidebar = useStore(useSidebar, (x) => x)
   if (!sidebar) return null
@@ -35,11 +39,14 @@ export const LogoRender = ({
       >
         {!nameApp && (
           <Image
-            src={LOGOS.white.src}
+            src={logoUrl}
             alt="logo-epg"
-            className="h-24 w-28"
             width={300}
             height={40}
+            style={{
+              width: sizeLogo?.width || 300,
+              height: sizeLogo?.height || 40,
+            }}
           />
         )}
         {getOpenState() && (
