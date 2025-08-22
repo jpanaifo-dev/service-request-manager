@@ -33,7 +33,7 @@ export const SideBar = (props: SideBarProps) => {
       >
         <LogoRender
           href={APP_URL.DASHBOARD.BASE}
-          logoUrl={LOGOS.horizontal.src}
+          logoUrl={LOGOS.horizontalWhite.src}
         />
         <Menu
           isOpen={getOpenState()}
